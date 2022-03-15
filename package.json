@@ -1,0 +1,13 @@
+{
+	"author": "Curt Weber",
+	"description": "Json types",
+	"devDependencies": {
+		"typescript": "^4.5.4"
+	},
+	"main": "./lib/index.js",
+	"name": "json",
+	"private": true,
+	"type": "module",
+	"types": "./lib/index.d.ts",
+	"version": "1.0.0"
+}
