@@ -39,14 +39,12 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			const key:string = keys[k];
 			const json:Json = this.schema[key];
 
-			// If the json is isnt optional, or it has been defined, add it to object
+			console.log('key : ' + key + ' opt: ' + (json instanceof JsonOptional).toString() + ' def: ' + (!(json instanceof JsonOptional) || json.defined).toString() + ' val: ' + json.get());
+
+			// If the json isnt optional, or it has been defined, add it to object
 			if(!(json instanceof JsonOptional) || json.defined)
 				value[key] = json.get();
 		}
-
-		console.log('get');
-		console.log(value); /* */
-		console.log('-----');
 
 		// Return success
 		return JSON.parse(JSON.stringify(value));
