@@ -13,7 +13,7 @@ type Value<T extends Record<string, Json>> = {[K in keyof T]:JsonInfer<T[K]>};
 export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends JsonRequired
 {
 	// Object constructor
-	constructor(readonly schema:T, value?:Value<T>)
+	constructor(readonly schema:Required<T>, value?:Value<T>)
 	{
 		// Call creation on json
 		super();
@@ -44,6 +44,10 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 				value[key] = json.get();
 		}
 
+		console.log('get');
+		console.log(value); /* */
+		console.log('-----');
+
 		// Return success
 		return JSON.parse(JSON.stringify(value));
 	}
@@ -62,10 +66,7 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			{
 				// If the key isnt within specified object, clear json
 				if(!(key in value))
-				{
-					console.log('clearing'); /* */
 					json.clear();
-				}
 
 				// If the json isnt defined, skip it
 				if(!json.defined)
