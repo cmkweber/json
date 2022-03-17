@@ -3,11 +3,11 @@ import {Json, JsonInfer} from './Json';
 import {JsonOptional} from './Optional';
 
 // Object types
-type Schema<T extends {[key:string]:Json}> = Required<{[K in keyof T]:T[K]}>;
-type Value<T extends {[key:string]:Json}> = {[K in keyof T]:JsonInfer<T[K]>};
+type Schema<T extends Required<{[key:string]:Json}>> = {[K in keyof T]:T[K]};
+type Value<T extends Required<{[key:string]:Json}>> = {[K in keyof T]:JsonInfer<T[K]>};
 
 // Object class
-export class JsonObject<T extends {[key:string]:Json} = {}> extends Json<Value<T>>
+export class JsonObject<T extends Required<{[key:string]:Json}> = {}> extends Json<Value<T>>
 {
 	// Object constructor
 	constructor(readonly schema:Schema<T>, value?:Value<T>)
