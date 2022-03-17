@@ -1,14 +1,22 @@
 // Package imports
 import {Json, JsonInfer} from './Json';
+import {JsonRequired} from './Required';
 
 // Optional class
-export class JsonOptional<T extends Json> extends Json<JsonInfer<T>>
+export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json
 {
+	// Optional members
+	#defined:boolean = false;
+	readonly #required:boolean = false;
+
 	// Optional constructor
 	constructor(readonly json:T, value?:JsonInfer<T>)
 	{
 		// Call creation on json
 		super();
+
+		// Set that the json is optional
+		this.#required;
 
 		// If a value was specified, set it
 		if(value != undefined)
@@ -16,11 +24,27 @@ export class JsonOptional<T extends Json> extends Json<JsonInfer<T>>
 	}
 
 	// Function to get the optionals value
-	override get():JsonInfer<T> { return this.json.get() as JsonInfer<T>; } /* */
+	get():JsonInfer<T>|undefined { return this.#defined ? this.json.get() as JsonInfer<T> : undefined; } /* */
 
 	// Function to set the optionals value
-	override set(value:JsonInfer<T>):void { this.json.set(value); }
+	set(value:JsonInfer<T>|undefined):void
+	{
+		// If a value was specified, set the json to it
+		if(value != undefined)
+			this.json.set(value);
+
+		// Store whether the optional is defined or not
+		this.#defined = value != undefined;
+	}
 
 	// Function to parse the specified value
-	parse(value:any):void { this.json.parse(value); }
+	parse(value:any):void
+	{
+		// If a value was specified, attempt to parse the json with it
+		if(value != undefined)
+			this.json.parse(value);
+
+		// Store whether the optional is defined or not
+		this.#defined = value != undefined;
+	}
 }

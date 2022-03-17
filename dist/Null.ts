@@ -1,19 +1,17 @@
 // Package imports
-import {Json} from './Json';
+import {JsonRequired} from './Required';
 
 // Null class
-export class JsonNull extends Json<null>
+export class JsonNull extends JsonRequired
 {
-	// Null constructor
-	constructor(value?:null)
-	{
-		// Call creation on json
-		super();
+	// Null members
+	#value:null = null;
 
-		// If a value was specified, set it
-		if(value != undefined)
-			this.set(value);
-	}
+	// Function to get the nulls value
+	get():null { return this.#value; }
+
+	// Function to set the nulls value
+	set(value:null) { this.#value = value; }
 
 	// Function to parse the specified value
 	parse(value:any):void

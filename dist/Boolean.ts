@@ -1,9 +1,12 @@
 // Package imports
-import {Json} from './Json';
+import {JsonRequired} from './Required';
 
 // Boolean class
-export class JsonBoolean extends Json<boolean>
+export class JsonBoolean extends JsonRequired
 {
+	// Boolean members
+	#value:boolean = false;
+
 	// Boolean constructor
 	constructor(readonly match?:boolean, value?:boolean)
 	{
@@ -15,15 +18,18 @@ export class JsonBoolean extends Json<boolean>
 			this.set(value);
 	}
 
+	// Function to get the booleans value
+	get():boolean { return this.#value; }
+
 	// Function to set the booleans value
-	override set(value:boolean):void
+	set(value:boolean):void
 	{
 		// If the boolean has a match, and the specified value doesnt match, throw error
 		if(this.match != undefined && value != this.match)
 			throw new Error('Invalid match');
 
-		// Call set on json
-		super.set(value);
+		// Store the specified value
+		this.#value = value;
 	}
 
 	// Function to parse the specified value

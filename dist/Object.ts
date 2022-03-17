@@ -1,16 +1,19 @@
 // Package imports
-import {Json, JsonInfer} from './Json';
+import {Json, JsonInfer, JsonValue} from './Json';
 import {JsonOptional} from './Optional';
+import {JsonRequired} from './Required';
 
 // Object types
-type Schema<T extends Required<{[key:string]:Json}>> = {[K in keyof T]:T[K]};
-type Value<T extends Required<{[key:string]:Json}>> = {[K in keyof T]:JsonInfer<T[K]>};
+type RequiredKeys<T> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? K : never}[keyof T], undefined>;
+type OptionalKeys<T> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
+type Restricted<T extends Record<string, Json>> = {[K in RequiredKeys<T>]:JsonRequired} & {[K in OptionalKeys<T>]?:JsonOptional};
+type Value<T extends Record<string, Json>> = {[K in keyof T]:JsonInfer<T[K]>};
 
 // Object class
-export class JsonObject<T extends Required<{[key:string]:Json}> = {}> extends Json<Value<T>>
+export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends JsonRequired
 {
 	// Object constructor
-	constructor(readonly schema:Schema<T>, value?:Value<T>)
+	constructor(readonly schema:T, value?:Value<T>)
 	{
 		// Call creation on json
 		super();
@@ -20,22 +23,44 @@ export class JsonObject<T extends Required<{[key:string]:Json}> = {}> extends Js
 			this.set(value);
 	}
 
-	// Function to set the objects value
-	override set(value:Value<T>):void
+	// Function to get the objects value
+	get():Value<T>
 	{
-		// Acquire the specified objects keys
-		const keys:Array<string> = Object.keys(value);
+		// Set the value to empty by default
+		const value:{[key:string]:JsonValue} = {};
 
-		// Loop through specified objects keys and attempt to set
+		// Acquire the schemas keys
+		const keys:Array<string> = Object.keys(this.schema);
+
+		// Loop through schemas keys and collect parameters
 		for(let k:number = 0; k < keys.length; k++)
 		{
-			// Acquire this key and json
+			// Acquire this key, json, and parameter
 			const key:string = keys[k];
+			const json:Json = this.schema[key];
+			const parameter:JsonValue|undefined = json.get();
+
+			// If the parameter is valid, add it to value
+			if(parameter != undefined)
+				value[key] = parameter;
+		}
+
+		// Return success
+		return JSON.parse(JSON.stringify(value));
+	}
+
+	// Function to set the objects value
+	set(value:Value<T>):void
+	{
+		// Loop through schema and attempt to set
+		for(const key in this.schema)
+		{
+			// Acquire this json
 			const json:Json = this.schema[key];
 
 			// Attempt to set the specified objects key
 			try {
-				json.set(value[key]); }
+				json.set(key in value ? value[key] : undefined); }
 			// On error, rethrow it
 			catch(error)
 			{
@@ -47,9 +72,6 @@ export class JsonObject<T extends Required<{[key:string]:Json}> = {}> extends Js
 					throw error;
 			}
 		}
-
-		// Call set on json
-		super.set(value);
 	}
 
 	// Function to update the objects value
@@ -62,45 +84,15 @@ export class JsonObject<T extends Required<{[key:string]:Json}> = {}> extends Js
 		if(typeof value != 'object')
 			throw new Error('Invalid type');
 
-		// Acquire the schema and specified objects keys
-		const schemaKeys:Array<string> = Object.keys(this.schema);
-		const valueKeys:Array<string> = Object.keys(value);
-
-		// Loop through specified objects keys and remove unknown keys
-		for(let k:number = 0; k < valueKeys.length; k++)
+		// Loop through schema and attempt to parse
+		for(const key in this.schema)
 		{
-			// Acquire this key and property
-			const key:string = valueKeys[k];
-			const property:any = value[key];
-
-			// Acquire the index of key within schema
-			const index:number = schemaKeys.indexOf(key);
-
-			// If the key isnt within schema, delete it
-			if(index == -1)
-				delete value[key];
-			// Else, 
-			else
-			{
-				// If the property is invalid, delete it
-				if(property == undefined)
-					delete value[key];
-
-				// Remove key from schema keys
-				schemaKeys.splice(index, 1);
-			}
-		}
-
-		// Loop through remaining schema keys and determine if theyre optional
-		for(let k:number = 0; k < schemaKeys.length; k++)
-		{
-			// Acquire this key and json
-			const key:string = schemaKeys[k];
+			// Acquire this json
 			const json:Json = this.schema[key];
 
-			// If the json isnt optional, throw error
-			if(!(json instanceof JsonOptional))
-				throw new Error('Missing ' + key);
+			// If the schema is required, and its not within specified value, throw error
+			if(json instanceof JsonRequired && (!(key in value) || value[key] == undefined))
+				throw new Error('Missing key ' + key);
 		}
 
 		// Set the specified value

@@ -1,9 +1,12 @@
 // Package imports
-import {Json} from './Json';
+import {JsonRequired} from './Required';
 
 // String class
-export class JsonString extends Json<string>
+export class JsonString extends JsonRequired
 {
+	// String members
+	#value:string = '';
+
 	// String constructor
 	constructor(readonly pattern?:RegExp, value?:string)
 	{
@@ -15,15 +18,18 @@ export class JsonString extends Json<string>
 			this.set(value);
 	}
 
+	// Function to get the strings value
+	get():string { return this.#value; }
+
 	// Function to set the strings value
-	override set(value:string):void
+	set(value:string):void
 	{
 		// If the string has a pattern, and the specified value doesnt match, throw error
 		if(this.pattern != undefined && !this.pattern.test(value))
 			throw new Error('Invalid pattern');
 
-		// Call set on json
-		super.set(value);
+		// Store the specified value
+		this.#value = value;
 	}
 
 	// Function to parse the specified value

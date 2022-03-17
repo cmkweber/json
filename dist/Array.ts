@@ -1,14 +1,15 @@
 // Package imports
-import {Json, JsonInfer} from './Json';
-
-// Array types
-type Value<T extends Json> = Array<JsonInfer<T>>
+import {JsonInfer} from './Json';
+import {JsonRequired} from './Required';
 
 // Array class
-export class JsonArray<T extends Json = Json> extends Json<Value<T>>
+export class JsonArray<T extends JsonRequired = JsonRequired> extends JsonRequired
 {
+	// Array members
+	#value:Array<JsonInfer<T>> = [];
+
 	// Array constructor
-	constructor(readonly pattern:Array<T>, readonly min?:number, readonly max?:number, value?:Value<T>)
+	constructor(readonly pattern:Array<T>, readonly min?:number, readonly max?:number, value?:Array<JsonInfer<T>>)
 	{
 		// Call creation on json
 		super();
@@ -30,8 +31,11 @@ export class JsonArray<T extends Json = Json> extends Json<Value<T>>
 			this.set(value);
 	}
 
+	// Function to get the arrays value
+	get():Array<JsonInfer<T>> { return this.#value; }
+
 	// Function to set the arrays value
-	override set(value:Value<T>):void
+	set(value:Array<JsonInfer<T>>):void
 	{
 		// If the array has a minimum, and the specified length is below it, throw error
 		if(this.min != undefined && value.length < this.min)
@@ -66,8 +70,8 @@ export class JsonArray<T extends Json = Json> extends Json<Value<T>>
 			}
 		}
 
-		// Call set on json
-		super.set(value);
+		// Store the specified value
+		this.#value = [...value];
 	}
 
 	// Function to parse the specified value

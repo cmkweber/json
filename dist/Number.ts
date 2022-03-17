@@ -1,9 +1,12 @@
 // Package imports
-import {Json} from './Json';
+import {JsonRequired} from './Required';
 
 // Number class
-export class JsonNumber extends Json<number>
+export class JsonNumber extends JsonRequired
 {
+	// Number members
+	#value:number = 0;
+
 	// Number constructor
 	constructor(readonly integer?:boolean, readonly min?:number, readonly max?:number, value?:number)
 	{
@@ -27,8 +30,11 @@ export class JsonNumber extends Json<number>
 			this.set(value);
 	}
 
+	// Function to get the numbers value
+	get():number { return this.#value; }
+
 	// Function to set the numbers value
-	override set(value:number):void
+	set(value:number):void
 	{
 		// If the specified value isnt a valid number, throw error
 		if(isNaN(value))
@@ -46,8 +52,8 @@ export class JsonNumber extends Json<number>
 		if(this.max != undefined && value > this.max)
 			throw new Error('Above maximum');
 
-		// Call set on json
-		super.set(value);
+		// Store the specified value
+		this.#value = value;
 	}
 
 	// Function to parse the specified value
