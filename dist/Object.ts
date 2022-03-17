@@ -62,7 +62,10 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			{
 				// If the key isnt within specified object, clear json
 				if(!(key in value))
+				{
+					console.log('clearing'); /* */
 					json.clear();
+				}
 
 				// If the json isnt defined, skip it
 				if(!json.defined)
