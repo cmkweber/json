@@ -9,6 +9,9 @@ export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json
 	#defined:boolean = false;
 	readonly #required:boolean = false;
 
+	// Optional getters
+	get defined():boolean { return this.#defined; }
+
 	// Optional constructor
 	constructor(readonly json:T, value?:JsonInfer<T>)
 	{
@@ -24,27 +27,28 @@ export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json
 	}
 
 	// Function to get the optionals value
-	get():JsonInfer<T>|undefined { return this.#defined ? this.json.get() as JsonInfer<T> : undefined; } /* */
+	get():JsonInfer<T> { return this.json.get() as JsonInfer<T>; }
 
 	// Function to set the optionals value
-	set(value:JsonInfer<T>|undefined):void
+	set(value:JsonInfer<T>):void
 	{
-		// If a value was specified, set the json to it
-		if(value != undefined)
-			this.json.set(value);
+		// Attempt to set the specified value
+		this.json.set(value);
 
-		// Store whether the optional is defined or not
-		this.#defined = value != undefined;
+		// Set that the optional is defined
+		this.#defined = true;
 	}
 
 	// Function to parse the specified value
 	parse(value:any):void
 	{
-		// If a value was specified, attempt to parse the json with it
-		if(value != undefined)
-			this.json.parse(value);
+		// Attempt to parse the specified value
+		this.json.parse(value);
 
-		// Store whether the optional is defined or not
-		this.#defined = value != undefined;
+		// Set that the optional is defined
+		this.#defined = true;
 	}
+
+	// Function to clear the optional value
+	clear():void { this.#defined = false; }
 }

@@ -26,7 +26,7 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 	// Function to get the objects value
 	get():Value<T>
 	{
-		// Set the value to empty by default
+		// Set the object to empty by default
 		const value:{[key:string]:JsonValue} = {};
 
 		// Acquire the schemas keys
@@ -35,14 +35,13 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 		// Loop through schemas keys and collect parameters
 		for(let k:number = 0; k < keys.length; k++)
 		{
-			// Acquire this key, json, and parameter
+			// Acquire this key and json
 			const key:string = keys[k];
 			const json:Json = this.schema[key];
-			const parameter:JsonValue|undefined = json.get();
 
-			// If the parameter is valid, add it to value
-			if(parameter != undefined)
-				value[key] = parameter;
+			// If the json is isnt optional, or it has been defined, add it to object
+			if(!(json instanceof JsonOptional) || json.defined)
+				value[key] = json.get();
 		}
 
 		// Return success
@@ -58,9 +57,21 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			// Acquire this json
 			const json:Json = this.schema[key];
 
+			// If the json is optional, attempt to clear it
+			if(json instanceof JsonOptional)
+			{
+				// If the key isnt within specified object, clear json
+				if(!(key in value))
+					json.clear();
+
+				// If the json isnt defined, skip it
+				if(!json.defined)
+					continue;
+			}
+
 			// Attempt to set the specified objects key
 			try {
-				json.set(key in value ? value[key] : undefined); }
+				json.set(value[key]); }
 			// On error, rethrow it
 			catch(error)
 			{
@@ -90,9 +101,20 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			// Acquire this json
 			const json:Json = this.schema[key];
 
-			// If the schema is required, and its not within specified value, throw error
-			if(json instanceof JsonRequired && (!(key in value) || value[key] == undefined))
-				throw new Error('Missing key ' + key);
+			// If the json is required, determine if it was specified
+			if(json instanceof JsonRequired)
+			{
+				// If the key is not within specified object, throw error
+				if(!(key in value) || value[key] == undefined)
+					throw new Error('Missing key ' + key);
+			}
+			// Else, if the json is optional, determine if it should be removed
+			else if(json instanceof JsonOptional)
+			{
+				// If the key is within specified object, and its invalid, remove it
+				if(key in value && value[key] == undefined)
+					delete value[key];
+			}
 		}
 
 		// Set the specified value

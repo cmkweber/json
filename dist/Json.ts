@@ -6,10 +6,10 @@ export type JsonValue = Array<JsonValue> | boolean | null | number | {[key:strin
 export abstract class Json
 {
 	// Function to get the jsons value
-	abstract get():JsonValue|undefined;
+	abstract get():JsonValue;
 
 	// Function to set the jsons value
-	abstract set(value:JsonValue|undefined):void;
+	abstract set(value:JsonValue):void;
 
 	// Function to parse the specified value
 	abstract parse(value:any):void;
