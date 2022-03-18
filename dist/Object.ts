@@ -4,13 +4,16 @@ import {JsonOptional} from './Optional';
 import {JsonRequired} from './Required';
 
 // Object types
-type RequiredKeys<T> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? K : never}[keyof T], undefined>;
-type OptionalKeys<T> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
-type Restricted<T extends Record<string, Json>> = {[K in RequiredKeys<T>]:JsonRequired} & {[K in OptionalKeys<T>]?:JsonOptional};
-type Value<T extends Record<string, Json>> = {[K in keyof T]:JsonInfer<T[K]>};
+type Schema<T> = Record<keyof T, Json>;
+type Keys<T extends Schema<T>> = Extract<keyof T, string>;
+type RequiredKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? K : never}[keyof T], undefined>;
+type OptionalKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
+type Restricted<T extends Schema<T>> = {[K in RequiredKeys<T>]:JsonRequired} & {[K in OptionalKeys<T>]?:JsonOptional};
+type Value<T extends Schema<T>> = {[K in keyof T]:JsonInfer<T[K]>};
+type Update<T extends Schema<T>> = {[K in RequiredKeys<T>]?:T[K]} & {[K in OptionalKeys<T>]?:T[K]|undefined};
 
 // Object class
-export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends JsonRequired
+export class JsonObject<T extends Schema<T> & Restricted<T>> extends JsonRequired
 {
 	// Object constructor
 	constructor(readonly schema:Required<T>, value?:Value<T>)
@@ -30,18 +33,18 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 		const value:{[key:string]:JsonValue} = {};
 
 		// Acquire the schemas keys
-		const keys:Array<string> = Object.keys(this.schema);
+		const keys:Array<Keys<T>> = Object.keys(this.schema) as Array<Keys<T>>;
 
-		// Loop through schemas keys and collect parameters
+		// Loop through schema and collect parameters
 		for(let k:number = 0; k < keys.length; k++)
 		{
 			// Acquire this key and json
-			const key:string = keys[k];
+			const key:keyof T = keys[k];
 			const json:Json = this.schema[key];
 
 			// If the json isnt optional, or it has been defined, add it to object
 			if(!(json instanceof JsonOptional) || json.defined)
-				value[key] = json.get();
+				value[key as string] = json.get();
 		}
 
 		// Return success
@@ -51,10 +54,14 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 	// Function to set the objects value
 	set(value:Value<T>):void
 	{
+		// Acquire the schemas keys
+		const keys:Array<Keys<T>> = Object.keys(this.schema) as Array<Keys<T>>;
+
 		// Loop through schema and attempt to set
-		for(const key in this.schema)
+		for(let k:number = 0; k < keys.length; k++)
 		{
-			// Acquire this json
+			// Acquire this key and json
+			const key:keyof T = keys[k];
 			const json:Json = this.schema[key];
 
 			// If the json is optional, and the key isnt within specified object, clear it and skip it
@@ -73,7 +80,7 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			{
 				// If the error is an error, rethrow it with key information
 				if(error instanceof Error)
-					throw new Error('{' + key + '}: ' + error.message);
+					throw new Error('{' + key.toString() + '}: ' + error.message);
 				// Else, rethrow error
 				else
 					throw error;
@@ -82,7 +89,40 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 	}
 
 	// Function to update the objects value
-	update(value:Partial<Value<T>>):void { this.set({...this.get(), ...value}); }
+	update(value:Update<T>):void
+	{
+		// Acquire the current value
+		const current:Value<T> = this.get();
+
+		// Acquire the schemas keys
+		const keys:Array<Keys<T>> = Object.keys(this.schema) as Array<Keys<T>>;
+
+		// Loop through schema and remove optional undefines
+		for(let k:number = 0; k < keys.length; k++)
+		{
+			// Acquire this key and json
+			const key:keyof T = keys[k];
+			const json:Json = this.schema[key];
+
+			// If the json is optional, and was specified, determine if its undefined
+			if(json instanceof JsonOptional && key in value)
+			{
+				// Acquire the key as a value key
+				const valueKey:keyof Update<T> = key as keyof Update<T>;
+
+				// If the optional was specified as undefined, remove it from current and specified object
+				if(value[valueKey] == undefined)
+				{
+					// Remove key from current and specified object
+					delete current[key];
+					delete value[valueKey];
+				}
+			}
+		}
+
+		// Set the specified value
+		this.set({...current, ...value});
+	}
 
 	// Function to parse the specified value
 	parse(value:any):void
@@ -91,10 +131,14 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 		if(typeof value != 'object')
 			throw new Error('Invalid type');
 
+		// Acquire the schemas keys
+		const keys:Array<Keys<T>> = Object.keys(this.schema) as Array<Keys<T>>;
+
 		// Loop through schema and attempt to parse
-		for(const key in this.schema)
+		for(let k:number = 0; k < keys.length; k++)
 		{
-			// Acquire this json
+			// Acquire this key and json
+			const key:keyof T = keys[k];
 			const json:Json = this.schema[key];
 
 			// If the json is required, determine if it was specified
@@ -102,7 +146,7 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			{
 				// If the key is not within specified object, throw error
 				if(!(key in value) || value[key] == undefined)
-					throw new Error('Missing key ' + key);
+					throw new Error('Missing key ' + key.toString());
 			}
 			// Else, if the json is optional, determine if it should be removed
 			else if(json instanceof JsonOptional)
