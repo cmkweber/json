@@ -10,7 +10,7 @@ type RequiredKeys<T extends Schema> = Exclude<{[K in keyof T]:T[K] extends Exclu
 type OptionalKeys<T extends Schema> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
 type Restricted<T extends Schema> = {[K in RequiredKeys<T>]:JsonRequired} & {[K in OptionalKeys<T>]?:JsonOptional};
 type Value<T extends Schema> = {[K in keyof T]:JsonInfer<T[K]>};
-type Update<T extends Schema> = {[K in RequiredKeys<T>]?:T[K]} & {[K in OptionalKeys<T>]?:T[K]|undefined};
+type Update<T extends Schema> = {[K in RequiredKeys<T>]?:JsonInfer<T[K]>} & {[K in OptionalKeys<T>]?:JsonInfer<T[K]>|undefined};
 
 // Object class
 export class JsonObject<T extends Schema & Restricted<T>> extends JsonRequired
