@@ -65,7 +65,7 @@ export class JsonObject<T extends Schema & Restricted<T>> extends JsonRequired
 			const json:Json = this.schema[key];
 
 			// If the json is optional, and the key isnt within specified object, clear it and skip it
-			if(json instanceof JsonOptional && !(key in value))
+			if(json instanceof JsonOptional && (!(key in value) || value[key] == undefined))
 			{
 				// Clear optional and skip it
 				json.clear();
@@ -147,13 +147,6 @@ export class JsonObject<T extends Schema & Restricted<T>> extends JsonRequired
 				// If the key is not within specified object, throw error
 				if(!(key in value) || value[key] == undefined)
 					throw new Error('Missing key ' + key.toString());
-			}
-			// Else, if the json is optional, determine if it should be removed
-			else if(json instanceof JsonOptional)
-			{
-				// If the key is within specified object, and its invalid, remove it
-				if(key in value && value[key] == undefined)
-					delete value[key];
 			}
 		}
 
