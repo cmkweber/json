@@ -4,16 +4,16 @@ import {JsonOptional} from './Optional';
 import {JsonRequired} from './Required';
 
 // Object types
-type Schema<T> = Record<keyof T, Json>;
-type Keys<T extends Schema<T>> = Extract<keyof T, string>;
-type RequiredKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? K : never}[keyof T], undefined>;
-type OptionalKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
-type Restricted<T extends Schema<T>> = {[K in RequiredKeys<T>]:JsonRequired} & {[K in OptionalKeys<T>]?:JsonOptional};
-type Value<T extends Schema<T>> = {[K in keyof T]:JsonInfer<T[K]>};
-type Update<T extends Schema<T>> = {[K in RequiredKeys<T>]?:T[K]} & {[K in OptionalKeys<T>]?:T[K]|undefined};
+type Schema = Record<string, Json>;
+type Keys<T extends Schema> = Extract<keyof T, string>;
+type RequiredKeys<T extends Schema> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? K : never}[keyof T], undefined>;
+type OptionalKeys<T extends Schema> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
+type Restricted<T extends Schema> = {[K in RequiredKeys<T>]:JsonRequired} & {[K in OptionalKeys<T>]?:JsonOptional};
+type Value<T extends Schema> = {[K in keyof T]:JsonInfer<T[K]>};
+type Update<T extends Schema> = {[K in RequiredKeys<T>]?:T[K]} & {[K in OptionalKeys<T>]?:T[K]|undefined};
 
 // Object class
-export class JsonObject<T extends Schema<T> & Restricted<T>> extends JsonRequired
+export class JsonObject<T extends Schema & Restricted<T>> extends JsonRequired
 {
 	// Object constructor
 	constructor(readonly schema:Required<T>, value?:Value<T>)
