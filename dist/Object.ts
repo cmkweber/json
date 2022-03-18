@@ -39,8 +39,6 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			const key:string = keys[k];
 			const json:Json = this.schema[key];
 
-			console.log('key : ' + key + ' opt: ' + (json instanceof JsonOptional).toString() + ' def: ' + (!(json instanceof JsonOptional) || json.defined).toString() + ' val: ' + json.get());
-
 			// If the json isnt optional, or it has been defined, add it to object
 			if(!(json instanceof JsonOptional) || json.defined)
 				value[key] = json.get();
@@ -58,8 +56,6 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 		{
 			// Acquire this json
 			const json:Json = this.schema[key];
-
-			console.log('key: ' + key + ' opt: ' + (json instanceof JsonOptional).toString() + ' spec: ' + (key in value).toString());
 
 			// If the json is optional, and the key isnt within specified object, clear it and skip it
 			if(json instanceof JsonOptional && !(key in value))
