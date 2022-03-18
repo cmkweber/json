@@ -59,16 +59,14 @@ export class JsonObject<T extends Record<string, Json> & Restricted<T>> extends 
 			// Acquire this json
 			const json:Json = this.schema[key];
 
-			// If the json is optional, attempt to clear it
-			if(json instanceof JsonOptional)
-			{
-				// If the key isnt within specified object, clear json
-				if(!(key in value))
-					json.clear();
+			console.log('key: ' + key + ' opt: ' + (json instanceof JsonOptional).toString() + ' spec: ' + (key in value).toString());
 
-				// If the json isnt defined, skip it
-				if(!json.defined)
-					continue;
+			// If the json is optional, and the key isnt within specified object, clear it and skip it
+			if(json instanceof JsonOptional && !(key in value))
+			{
+				// Clear optional and skip it
+				json.clear();
+				continue;
 			}
 
 			// Attempt to set the specified objects key
