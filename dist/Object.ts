@@ -1,4 +1,5 @@
 // Package imports
+import {JsonAny} from './Any';
 import {Json, JsonInfer} from './Json';
 import {JsonOptional} from './Optional';
 import {JsonRequired} from './Required';
@@ -41,28 +42,24 @@ export class JsonObject<T extends Restricted<T> = {[key:string]:JsonRequired} & 
 		// Acquire the keys based on whether theres a schema or not
 		const keys:Array<Keys<T>> = Object.keys(this.schema != undefined ? this.schema : value) as Array<Keys<T>>;
 
-		// Loop through keys and attempt to set
+		// Loop through keys and attempt to parse
 		for(let k:number = 0; k < keys.length; k++)
 		{
 			// Acquire this key
 			const key:keyof T = keys[k];
 
-			// Attempt to set the specified objects key
+			// Attempt to parse the specified objects key
 			try
 			{
 				// Acquire this json
-				const json:Json = this.schema != undefined ? this.schema[key] : Json.parse(value[key]);
+				const json:Json = this.schema != undefined ? this.schema[key] : new JsonAny();
 
-				// If the object has a schema, attempt to set the specified objects key
-				if(this.schema != undefined)
-				{
-					// If the json is optional, and the key isnt within specified object, skip it
-					if(json instanceof JsonOptional && !(key in value))
-						continue;
+				// If the object has a schema, and the json is optional, and the key wasnt specified, skip it
+				if(this.schema != undefined && json instanceof JsonOptional && !(key in value))
+					continue;
 
-					// Attempt to set the specified objects key
-					json.set(value[key]);
-				}
+				// Attempt to parse the specified objects key
+				json.parse(value[key]);
 
 				// Set the specified key
 				this.#value[key] = json.get() as JsonInfer<T[typeof key]>;

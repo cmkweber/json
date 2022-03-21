@@ -1,4 +1,5 @@
 // Package exports
+export {JsonAny} from './dist/Any';
 export {JsonArray} from './dist/Array';
 export {JsonBoolean} from './dist/Boolean';
 export type {Json, JsonInfer, JsonValue} from './dist/Json';

@@ -1,9 +1,10 @@
 // Package imports
-import {Json, JsonInfer} from './Json';
+import {JsonAny} from './Any';
+import {JsonInfer} from './Json';
 import {JsonRequired} from './Required';
 
 // Array class
-export class JsonArray<T extends JsonRequired = JsonRequired> extends JsonRequired
+export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired
 {
 	// Array members
 	#value:Array<JsonInfer<T>> = [];
@@ -48,18 +49,17 @@ export class JsonArray<T extends JsonRequired = JsonRequired> extends JsonRequir
 		// Create an array to store values
 		const values:Array<JsonInfer<T>> = [];
 
-		// Loop through specified arrays values and attempt to set
+		// Loop through specified arrays values and collect
 		for(let i:number = 0; i < value.length; i++)
 		{
-			// Attempt to set the specified arrays value
+			// Attempt to collect the specified arrays value
 			try
 			{
 				// Acquire this json
-				const json:Json = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : Json.parse(value[i]);
+				const json:JsonRequired = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
 
-				// If the array has a pattern, attempt to set the value to pattern
-				if(this.pattern.length > 0)
-					json.set(value[i]);
+				// Attempt to parse the specified arrays value
+				json.parse(value[i]);
 
 				// Add value to values
 				values.push(json.get() as JsonInfer<T>);
