@@ -4,7 +4,6 @@ import {JsonBoolean} from './Boolean';
 import {JsonNull} from './Null';
 import {JsonNumber} from './Number';
 import {JsonObject} from './Object';
-import {JsonRequired} from './Required';
 import {JsonString} from './String';
 
 // Json types
@@ -24,10 +23,10 @@ export abstract class Json
 	abstract parse(value:any):void;
 
 	// Function to parse the specified value
-	static parse(value:any):JsonRequired
+	static parse(value:any):Json
 	{
 		// Set the json to null by default
-		let json:JsonRequired;
+		let json:Json;
 
 		// If the specified value is a boolean, set the json to boolean
 		if(typeof value == 'boolean')

@@ -55,7 +55,7 @@ export class JsonArray<T extends JsonRequired = JsonRequired> extends JsonRequir
 			try
 			{
 				// Acquire this json
-				const json:JsonRequired = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : Json.parse(value[i]);
+				const json:Json = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : Json.parse(value[i]);
 
 				// If the array has a pattern, attempt to set the value to pattern
 				if(this.pattern.length > 0)
