@@ -1,5 +1,5 @@
 // Package imports
-import {JsonInfer} from './Json';
+import {Json, JsonInfer} from './Json';
 import {JsonRequired} from './Required';
 
 // Array class
@@ -9,7 +9,7 @@ export class JsonArray<T extends JsonRequired = JsonRequired> extends JsonRequir
 	#value:Array<JsonInfer<T>> = [];
 
 	// Array constructor
-	constructor(readonly pattern:Array<T>, readonly min?:number, readonly max?:number, value?:Array<JsonInfer<T>>)
+	constructor(readonly pattern:Array<T> = [], readonly min?:number, readonly max?:number, value?:Array<JsonInfer<T>>)
 	{
 		// Call creation on json
 		super();
@@ -45,33 +45,39 @@ export class JsonArray<T extends JsonRequired = JsonRequired> extends JsonRequir
 		if(this.max != undefined && value.length > this.max)
 			throw new Error('Above maximum');
 
-		// If the array has a pattern, determine if the specified value matches it
-		if(this.pattern.length > 0)
+		// Create an array to store values
+		const values:Array<JsonInfer<T>> = [];
+
+		// Loop through specified arrays values and attempt to set
+		for(let i:number = 0; i < value.length; i++)
 		{
-			// Loop through specified arrays values and attempt to set
-			for(let i:number = 0; i < value.length; i++)
+			// Attempt to set the specified arrays value
+			try
 			{
 				// Acquire this json
-				const json:T = this.pattern[i % this.pattern.length];
+				const json:JsonRequired = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : Json.parse(value[i]);
 
-				// Attempt to set the specified arrays value
-				try {
-					json.set(value[i]); }
-				// On error, rethrow it
-				catch(error)
-				{
-					// If the error is an error, rethrow it with index information
-					if(error instanceof Error)
-						throw new Error('[' + i.toString() + ']: ' + error.message);
-					// Else, rethrow error
-					else
-						throw error;
-				}
+				// If the array has a pattern, attempt to set the value to pattern
+				if(this.pattern.length > 0)
+					json.set(value[i]);
+
+				// Add value to values
+				values.push(json.get() as JsonInfer<T>);
+			}
+			// On error, rethrow it
+			catch(error)
+			{
+				// If the error is an error, rethrow it with index information
+				if(error instanceof Error)
+					throw new Error('[' + i.toString() + ']: ' + error.message);
+				// Else, rethrow error
+				else
+					throw error;
 			}
 		}
 
-		// Store the specified value
-		this.#value = [...value];
+		// Store values
+		this.#value = values;
 	}
 
 	// Function to parse the specified value

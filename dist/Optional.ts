@@ -6,11 +6,7 @@ import {JsonRequired} from './Required';
 export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json
 {
 	// Optional members
-	#defined:boolean = false;
 	readonly #required:boolean = false;
-
-	// Optional getters
-	get defined():boolean { return this.#defined; }
 
 	// Optional constructor
 	constructor(readonly json:T, value?:JsonInfer<T>)
@@ -30,25 +26,8 @@ export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json
 	get():JsonInfer<T> { return this.json.get() as JsonInfer<T>; }
 
 	// Function to set the optionals value
-	set(value:JsonInfer<T>):void
-	{
-		// Attempt to set the specified value
-		this.json.set(value);
-
-		// Set that the optional is defined
-		this.#defined = true;
-	}
+	set(value:JsonInfer<T>):void { this.json.set(value); }
 
 	// Function to parse the specified value
-	parse(value:any):void
-	{
-		// Attempt to parse the specified value
-		this.json.parse(value);
-
-		// Set that the optional is defined
-		this.#defined = true;
-	}
-
-	// Function to clear the optional value
-	clear():void { this.#defined = false; }
+	parse(value:any):void { this.json.parse(value); }
 }
