@@ -2,11 +2,11 @@
 import {JsonRequired} from './Required';
 
 // Enum types
-type Enum<T extends Record<keyof T, number|string>> = Record<keyof T, number|string>;
-type EnumInfer<T extends Enum<T>> = T extends Record<keyof T, infer U> ? U : never;
+type Enum<T extends Record<keyof T, number|string> = Record<string, number|string>> = T;
+type EnumInfer<T extends Record<keyof T, number|string>> = T extends Record<keyof T, infer U> ? U : never;
 
 // Enum class
-export class JsonEnum<T extends Enum<T>> extends JsonRequired
+export class JsonEnum<T extends Enum> extends JsonRequired
 {
 	// Enum members
 	#value:EnumInfer<T>;
@@ -18,7 +18,7 @@ export class JsonEnum<T extends Enum<T>> extends JsonRequired
 		super();
 
 		// Acquire the enumerations values
-		const values:Array<EnumInfer<T>> = Object.values(this.enumeration);
+		const values:Array<EnumInfer<T>> = Object.values(this.enumeration) as Array<EnumInfer<T>>;
 
 		// If the specified enumeration is invalid, throw error
 		if(values.length == 0)
@@ -43,7 +43,7 @@ export class JsonEnum<T extends Enum<T>> extends JsonRequired
 	set(value:EnumInfer<T>):void
 	{
 		// Acquire the enumerations values
-		const values:Array<EnumInfer<T>> = Object.values(this.enumeration);
+		const values:Array<EnumInfer<T>> = Object.values(this.enumeration) as Array<EnumInfer<T>>;
 
 		// If the specified value isnt within enumeration, throw error
 		if(!values.includes(value))
