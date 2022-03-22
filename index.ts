@@ -2,6 +2,7 @@
 export {JsonAny} from './dist/Any';
 export {JsonArray} from './dist/Array';
 export {JsonBoolean} from './dist/Boolean';
+export {JsonEnum} from './dist/Enum';
 export type {Json, JsonInfer, JsonValue} from './dist/Json';
 export {JsonNull} from './dist/Null';
 export {JsonNumber} from './dist/Number';
