@@ -3,7 +3,7 @@ import {JsonRequired} from './Required';
 
 // Enum types
 type Enum<T> = Record<keyof T, number|string>;
-type EnumInfer<T extends Enum<T>> = T extends Record<keyof T, infer U> ? U : never;
+type EnumInfer<T> = T extends Record<keyof T, infer U> ? U : never;
 
 // Enum class
 export class JsonEnum<T extends Enum<T>> extends JsonRequired
