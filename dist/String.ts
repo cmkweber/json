@@ -2,7 +2,7 @@
 import {JsonRequired} from './Required';
 
 // String class
-export class JsonString extends JsonRequired
+export class JsonString extends JsonRequired<string>
 {
 	// String members
 	#value:string = '';

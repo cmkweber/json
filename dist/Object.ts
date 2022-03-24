@@ -14,7 +14,7 @@ type Value<T extends Schema<T>> = {[K in keyof T]:JsonInfer<T[K]>};
 type Update<T extends Schema<T>> = {[K in RequiredKeys<T>]?:JsonInfer<T[K]>} & {[K in OptionalKeys<T>]?:JsonInfer<T[K]>|undefined};
 
 // Object class
-export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired> & Record<string, JsonOptional>> extends JsonRequired
+export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired> & Record<string, JsonOptional>> extends JsonRequired<Value<T>>
 {
 	// Object members
 	#value:Value<T> = {} as Value<T>;

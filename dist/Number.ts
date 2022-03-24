@@ -2,7 +2,7 @@
 import {JsonRequired} from './Required';
 
 // Number class
-export class JsonNumber extends JsonRequired
+export class JsonNumber extends JsonRequired<number>
 {
 	// Number members
 	#value:number = 0;

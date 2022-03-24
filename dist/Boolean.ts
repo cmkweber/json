@@ -2,7 +2,7 @@
 import {JsonRequired} from './Required';
 
 // Boolean class
-export class JsonBoolean extends JsonRequired
+export class JsonBoolean extends JsonRequired<boolean>
 {
 	// Boolean members
 	#value:boolean = false;

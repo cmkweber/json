@@ -6,7 +6,7 @@ type Enum<T extends {[key:number|string]:V}, V = any> = {[K in keyof T]-?:V};
 type Keys<T extends Enum<T>> = Extract<keyof T, number|string>;
 
 // Enum class
-export class JsonEnum<T extends Enum<T, V>, V = any> extends JsonRequired
+export class JsonEnum<T extends Enum<T, V>, V = any> extends JsonRequired<Keys<T>>
 {
 	// Enum members
 	#value:Keys<T>;

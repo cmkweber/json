@@ -4,7 +4,7 @@ import {JsonInfer} from './Json';
 import {JsonRequired} from './Required';
 
 // Array class
-export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired
+export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired<Array<JsonInfer<T>>>
 {
 	// Array members
 	#value:Array<JsonInfer<T>> = [];

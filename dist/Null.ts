@@ -2,7 +2,7 @@
 import {JsonRequired} from './Required';
 
 // Null class
-export class JsonNull extends JsonRequired
+export class JsonNull extends JsonRequired<null>
 {
 	// Null members
 	#value:null = null;

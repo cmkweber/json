@@ -3,7 +3,7 @@ import {Json, JsonInfer} from './Json';
 import {JsonRequired} from './Required';
 
 // Optional class
-export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json
+export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json<JsonInfer<T>>
 {
 	// Optional members
 	readonly #required:boolean = false;

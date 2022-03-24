@@ -1,8 +1,8 @@
 // Package imports
-import {Json} from './Json';
+import {Json, JsonValue} from './Json';
 
 // Required class
-export abstract class JsonRequired extends Json
+export abstract class JsonRequired<T extends JsonValue = JsonValue> extends Json<T>
 {
 	// Required members
 	readonly #required:boolean = true;
