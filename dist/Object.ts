@@ -1,20 +1,20 @@
 // Package imports
 import {JsonAny} from './Any';
-import {Json, JsonInfer} from './Json';
+import {Json, JsonInfer, JsonValue} from './Json';
 import {JsonOptional} from './Optional';
 import {JsonRequired} from './Required';
 
 // Object types
-type Schema<T extends Record<keyof T, Json> = Record<string, Json>> = Record<keyof T, Json>;
+type Schema<T extends Record<keyof T, Json<JsonValue>> = Record<string, Json<JsonValue>>> = Record<keyof T, Json<JsonValue>>;
 type Keys<T extends Schema<T>> = Extract<keyof T, string>;
 type RequiredKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? K : never}[keyof T], undefined>;
 type OptionalKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
-type Restricted<T extends Schema<T>> = {[K in RequiredKeys<T>]:JsonRequired} & {[K in OptionalKeys<T>]?:JsonOptional};
+type Restricted<T extends Schema<T>> = {[K in RequiredKeys<T>]:JsonRequired<JsonValue>} & {[K in OptionalKeys<T>]?:JsonOptional};
 type Value<T extends Schema<T>> = {[K in keyof T]:JsonInfer<T[K]>};
 type Update<T extends Schema<T>> = {[K in RequiredKeys<T>]?:JsonInfer<T[K]>} & {[K in OptionalKeys<T>]?:JsonInfer<T[K]>|undefined};
 
 // Object class
-export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired> & Record<string, JsonOptional>> extends JsonRequired<Value<T>>
+export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<JsonValue>> & Record<string, JsonOptional>> extends JsonRequired<Value<T>>
 {
 	// Object members
 	#value:Value<T> = {} as Value<T>;
@@ -52,7 +52,7 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired> &
 			try
 			{
 				// Acquire this json
-				const json:Json = this.schema != undefined ? this.schema[key] : new JsonAny();
+				const json:Json<JsonValue> = this.schema != undefined ? this.schema[key] : new JsonAny();
 
 				// If the object has a schema, and the json is optional, and the key wasnt specified, skip it
 				if(this.schema != undefined && json instanceof JsonOptional && !(key in value))

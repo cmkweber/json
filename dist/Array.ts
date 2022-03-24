@@ -1,10 +1,10 @@
 // Package imports
 import {JsonAny} from './Any';
-import {JsonInfer} from './Json';
+import {JsonInfer, JsonValue} from './Json';
 import {JsonRequired} from './Required';
 
 // Array class
-export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired<Array<JsonInfer<T>>>
+export class JsonArray<T extends JsonRequired<JsonValue> = JsonAny> extends JsonRequired<Array<JsonInfer<T>>>
 {
 	// Array members
 	#value:Array<JsonInfer<T>> = [];
@@ -56,7 +56,7 @@ export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired<Ar
 			try
 			{
 				// Acquire this json
-				const json:JsonRequired = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
+				const json:JsonRequired<JsonValue> = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
 
 				// Attempt to parse the specified arrays value
 				json.parse(value[i]);

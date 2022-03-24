@@ -9,7 +9,7 @@ import {JsonRequired} from './Required';
 import {JsonString} from './String';
 
 // Any class
-export class JsonAny extends JsonRequired
+export class JsonAny extends JsonRequired<JsonValue>
 {
 	// Any members
 	#value:JsonValue = null;
@@ -35,7 +35,7 @@ export class JsonAny extends JsonRequired
 	parse(value:any):void
 	{
 		// Set the json to null by default
-		let json:JsonRequired;
+		let json:JsonRequired<JsonValue>;
 
 		// If the specified value is a boolean, set the json to boolean
 		if(typeof value == 'boolean')

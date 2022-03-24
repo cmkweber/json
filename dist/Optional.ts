@@ -1,9 +1,9 @@
 // Package imports
-import {Json, JsonInfer} from './Json';
+import {Json, JsonInfer, JsonValue} from './Json';
 import {JsonRequired} from './Required';
 
 // Optional class
-export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json<JsonInfer<T>>
+export class JsonOptional<T extends JsonRequired<JsonValue> = JsonRequired<JsonValue>> extends Json<JsonInfer<T>>
 {
 	// Optional members
 	readonly #required:boolean = false;
