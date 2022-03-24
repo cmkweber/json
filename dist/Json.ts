@@ -1,6 +1,6 @@
 // Json types
 export type JsonInfer<T extends Json> = T extends {get():infer G} ? G : never;
-export type JsonValue = Array<JsonValue> | boolean | null | number | {[key:string]:JsonValue} | string;
+export type JsonValue = Array<JsonValue>|boolean|null|number|{[key:string]:JsonValue}|string;
 
 // Json class
 export abstract class Json
