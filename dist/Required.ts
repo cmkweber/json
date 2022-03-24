@@ -2,7 +2,7 @@
 import {Json, JsonValue} from './Json';
 
 // Required class
-export abstract class JsonRequired<T extends JsonValue> extends Json<T>
+export abstract class JsonRequired<T extends JsonValue = JsonValue> extends Json<T>
 {
 	// Required members
 	readonly #required:boolean = true;
