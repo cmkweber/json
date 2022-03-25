@@ -4,7 +4,7 @@ export {JsonArray} from './dist/Array';
 export {JsonBoolean} from './dist/Boolean';
 export {JsonEnum} from './dist/Enum';
 export {Json} from './dist/Json';
-export type {JsonInfer, JsonValue} from './dist/Json';
+export type {JsonInput, JsonOutput, JsonValue} from './dist/Json';
 export {JsonNull} from './dist/Null';
 export {JsonNumber} from './dist/Number';
 export {JsonObject} from './dist/Object';

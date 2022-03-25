@@ -9,19 +9,19 @@ import {JsonRequired} from './Required';
 import {JsonString} from './String';
 
 // Any class
-export class JsonAny extends JsonRequired
+export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 {
 	// Any constructor
 	constructor() { super(null); }
 
-	// Function to validate the specified value
-	validate(value:JsonValue): void { value; }
+	// Function to validate the anys value
+	validate():void {}
 
 	// Function to parse the specified value
 	parse(value:any):void
 	{
 		// Set the json to null by default
-		let json:JsonRequired;
+		let json:JsonRequired<JsonValue, JsonValue>;
 
 		// If the specified value is a boolean, set the json to boolean
 		if(typeof value == 'boolean')
@@ -46,6 +46,9 @@ export class JsonAny extends JsonRequired
 		json.parse(value);
 
 		// Set the specified value
-		this.set(json.get());
+		this.set(json.value);
 	}
+
+	// Function to serialize the anys value
+	serialize():JsonValue { return this.value; }
 }

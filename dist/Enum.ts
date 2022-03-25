@@ -2,39 +2,39 @@
 import {JsonRequired} from './Required';
 
 // Enum types
-type Enum<T extends {[key:number|string]:V}, V = any> = {[K in keyof T]-?:V};
-type Keys<T extends Enum<T>> = Extract<keyof T, number|string>;
+type Enum<T extends Record<keyof T, number|string>> = Record<keyof T, number|string>;
+type Infer<T extends Enum<T>> = T extends Record<keyof T, infer T> ? T : never;
 
 // Enum class
-export class JsonEnum<T extends Enum<T, V>, V = any> extends JsonRequired<Keys<T>>
+export class JsonEnum<T extends Enum<T>> extends JsonRequired<keyof T, Infer<T>>
 {
 	// Enum members
 	readonly enumeration:T;
-	readonly match?:Keys<T>|undefined;
+	readonly match?:keyof T|undefined;
 
 	// Enum constructor
-	constructor(enumeration:T, match?:Keys<T>)
+	constructor(enumeration:T, match?:keyof T)
 	{
 		// Acquire the enumerations keys
-		const keys:Array<string> = Object.keys(enumeration);
+		const keys:Array<keyof T> = Object.keys(enumeration) as Array<keyof T>;
 
 		// If the specified enumeration is invalid, throw error
 		if(keys.length == 0)
 			throw new Error('Invalid enumeration');
 
 		// Call creation on json
-		super((isNaN(Number(keys[0])) ? keys[0] : Number(keys[0])) as Keys<T>);
+		super(keys[0]);
 
 		// Store the specified enumeration and match
 		this.enumeration = enumeration;
 		this.match = match;
 	}
 
-	// Function to validate the specified enum
-	validate(value:Keys<T>):void
+	// Function to validate the enums value
+	validate():void
 	{
-		// If the enum has a match, and the specified value doesnt match, throw error
-		if(this.match != undefined && value != this.match)
+		// If the enum has a match, and the value doesnt match, throw error
+		if(this.match != undefined && this.value != this.match)
 			throw new Error('Invalid match');
 	}
 
@@ -46,19 +46,19 @@ export class JsonEnum<T extends Enum<T, V>, V = any> extends JsonRequired<Keys<T
 			throw new Error('Invalid type');
 
 		// Acquire the enumerations keys
-		const keys:Array<string> = Object.keys(this.enumeration);
+		const keys:Array<keyof T> = Object.keys(this.enumeration) as Array<keyof T>;
 
 		// Loop through keys and attempt to set the specified value
 		for(let k:number = 0; k < keys.length; k++)
 		{
 			// Acquire this key
-			const key:number|string = isNaN(Number(keys[k])) ? keys[k] : Number(keys[k]);
+			const key:keyof T = keys[k];
 
-			// If the specified value is this key, set it and return early
-			if(value === key)
+			// If the specified value is this keys value, set it and return early
+			if(value == this.enumeration[key])
 			{
 				// Set the specified value
-				this.set(key as Keys<T>);
+				this.set(key);
 				return;
 			}
 		}
@@ -66,4 +66,7 @@ export class JsonEnum<T extends Enum<T, V>, V = any> extends JsonRequired<Keys<T
 		// Throw error
 		throw new Error('Invalid value');
 	}
+
+	// Function to serialize the enums value
+	serialize():Infer<T> { return this.enumeration[this.value] as Infer<T>; }
 }

@@ -2,13 +2,13 @@
 import {JsonRequired} from './Required';
 
 // Null class
-export class JsonNull extends JsonRequired<null>
+export class JsonNull extends JsonRequired<null, null>
 {
 	// Null constructor
 	constructor() { super(null); }
 
-	// Function to validate the specified null
-	validate(value:null) { value; }
+	// Function to validate the nulls value
+	validate():void {}
 
 	// Function to parse the specified value
 	parse(value:any):void
@@ -20,4 +20,7 @@ export class JsonNull extends JsonRequired<null>
 		// Set the specified value
 		this.set(value);
 	}
+
+	// Function to serialize the nulls value
+	serialize():null { return this.value; }
 }

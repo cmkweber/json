@@ -1,32 +1,36 @@
 // Package imports
-import {Json, JsonInfer} from './Json';
+import {JsonAny} from './Any';
+import {Json, JsonInput, JsonOutput, JsonValue} from './Json';
 import {JsonRequired} from './Required';
 
 // Optional class
-export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json<JsonInfer<T>>
+export class JsonOptional<T extends JsonRequired<any, JsonValue> = JsonAny> extends Json<JsonInput<T>, JsonOutput<T>>
 {
 	// Optional members
 	readonly #required:boolean = false;
+
+	// Optional getters
+	override get value():JsonInput<T> { return this.json.value as JsonInput<T>; }
 
 	// Optional constructor
 	constructor(readonly json:T)
 	{
 		// Call creation on json
-		super(json.get() as JsonInfer<T>);
+		super(json.value as JsonInput<T>);
 
 		// Set that the json is optional
 		this.#required;
 	}
 
-	// Function to get the optionals value
-	override get():JsonInfer<T> { return this.json.get() as JsonInfer<T>; };
+	// Function to set the optionals value
+	override set(value:JsonInput<T>) { this.json.set(value); }
 
-	// Function to set the specified value
-	override set(value:JsonInfer<T>) { this.json.set(value); }
-
-	// Function to validate the specified value
-	validate(value:JsonInfer<T>):void { this.json.validate(value); }
+	// Function to validate the optionals value
+	validate():void { return this.json.validate(); }
 
 	// Function to parse the specified value
 	parse(value:any):void { this.json.parse(value); }
+
+	// Function to serialize the optionals value
+	serialize():JsonOutput<T> { return this.json.serialize() as JsonOutput<T>; }
 }

@@ -1,32 +1,36 @@
 // Json types
-export type JsonInfer<T> = T extends Json<infer T> ? T : never;
+export type JsonInput<I> = I extends Json<infer I, JsonValue> ? I : never;
+export type JsonOutput<O> = O extends Json<unknown, infer O> ? O : never;
 export type JsonValue = Array<JsonValue>|boolean|null|number|{[key:string]:JsonValue}|string;
 
 // Json class
-export abstract class Json<T extends JsonValue = JsonValue>
+export abstract class Json<I, O extends JsonValue>
 {
 	// Json members
-	#value:T;
+	#value:I;
+
+	// Json getters
+	get value():I { return this.#value; }
 
 	// Json constructor
-	constructor(value:T) { this.#value = value; }
-
-	// Function to get the jsons value
-	get():T { return this.#value; };
+	constructor(value:I) { this.#value = value; }
 
 	// Function to set the specified value
-	set(value:T):void
+	set(value:I):void
 	{
 		// Attempt to validate the specified value
-		this.validate(value);
+		this.validate();
 
 		// Store the specified value
 		this.#value = value;
 	}
 
 	// Function to validate the jsons value
-	abstract validate(value:T):void;
+	abstract validate():void;
 
 	// Function to parse the specified value
 	abstract parse(value:any):void;
+
+	// Function to serialize the jsons value
+	abstract serialize():O;
 }

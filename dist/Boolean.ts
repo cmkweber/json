@@ -2,16 +2,16 @@
 import {JsonRequired} from './Required';
 
 // Boolean class
-export class JsonBoolean extends JsonRequired<boolean>
+export class JsonBoolean extends JsonRequired<boolean, boolean>
 {
 	// Boolean constructor
 	constructor(readonly match?:boolean) { super(false); }
 
-	// Function to validate the specified boolean
-	validate(value:boolean):void
+	// Function to validate the booleans value
+	validate():void
 	{
-		// If the boolean has a match, and the specified value doesnt match, throw error
-		if(this.match != undefined && value != this.match)
+		// If the boolean has a match, and the value doesnt match, throw error
+		if(this.match != undefined && this.value != this.match)
 			throw new Error('Invalid match');
 	}
 
@@ -25,4 +25,7 @@ export class JsonBoolean extends JsonRequired<boolean>
 		// Set the specified value
 		this.set(value);
 	}
+
+	// Function to serialize the booleans value
+	serialize():boolean { return this.value; }
 }
