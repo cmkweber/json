@@ -9,24 +9,23 @@ export class JsonOptional<T extends JsonRequired = JsonRequired> extends Json<Js
 	readonly #required:boolean = false;
 
 	// Optional constructor
-	constructor(readonly json:T, value?:JsonInfer<T>)
+	constructor(readonly json:T)
 	{
 		// Call creation on json
-		super();
+		super(json.get() as JsonInfer<T>);
 
 		// Set that the json is optional
 		this.#required;
-
-		// If a value was specified, set it
-		if(value != undefined)
-			this.set(value);
 	}
 
 	// Function to get the optionals value
-	get():JsonInfer<T> { return this.json.get() as JsonInfer<T>; }
+	override get():JsonInfer<T> { return this.json.get() as JsonInfer<T>; };
 
-	// Function to set the optionals value
-	set(value:JsonInfer<T>):void { this.json.set(value); }
+	// Function to set the specified value
+	override set(value:JsonInfer<T>) { this.json.set(value); }
+
+	// Function to validate the specified value
+	validate(value:JsonInfer<T>):void { this.json.validate(value); }
 
 	// Function to parse the specified value
 	parse(value:any):void { this.json.parse(value); }

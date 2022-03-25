@@ -17,28 +17,46 @@ type Update<T extends Schema<T>> = {[K in RequiredKeys<T>]?:JsonInfer<T[K]>} & {
 export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired> & Record<string, JsonOptional>> extends JsonRequired<Value<T>>
 {
 	// Object members
-	#value:Value<T> = {} as Value<T>;
+	readonly schema:Required<Schema<T>>|undefined;
 
 	// Object constructor
-	constructor(readonly schema?:Required<Schema<T>>, value?:Value<T>)
-	{
-		// Call creation on json
-		super();
-
-		// If a value was specified, set it
-		if(value != undefined)
-			this.set(value);
-	}
-
-	// Function to get the objects value
-	get():Value<T> { return this.#value; }
-
-	// Function to set the objects value
-	set(value:Value<T>):void
+	constructor(schema?:Required<Schema<T>>)
 	{
 		// Set the object to empty by default
-		this.#value = {} as Value<T>;
+		const value:Value<T> = {} as Value<T>;
 
+		// If a schema was specified, loop through keys and add to object
+		if(schema != undefined)
+		{
+			// Acquire the schemas keys
+			const keys:Array<Keys<T>> = Object.keys(schema) as Array<Keys<T>>;
+
+			// Loop through keys and add to object
+			for(let k:number = 0; k < keys.length; k++)
+			{
+				// Acquire this key and json
+				const key:keyof T = keys[k];
+				const json:Json = schema[key];
+
+				// If this json is required, add it to object
+				if(json instanceof JsonRequired)
+					value[key] = json.get();
+			}
+		}
+
+		// Call creation on json
+		super(value);
+
+		// Store the specified schema
+		this.schema = schema;
+	}
+
+	// Function to set the specified value
+	override set(value:Value<T>) { super.set({...value}); }
+
+	// Function to validate the specified object
+	validate(value:Value<T>):void
+	{
 		// Acquire the keys based on whether theres a schema or not
 		const keys:Array<Keys<T>> = Object.keys(this.schema != undefined ? this.schema : value) as Array<Keys<T>>;
 
@@ -54,15 +72,9 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired> &
 				// Acquire this json
 				const json:Json = this.schema != undefined ? this.schema[key] : new JsonAny();
 
-				// If the object has a schema, and the json is optional, and the key wasnt specified, skip it
-				if(this.schema != undefined && json instanceof JsonOptional && !(key in value))
-					continue;
-
-				// Attempt to parse the specified objects key
-				json.parse(value[key]);
-
-				// Set the specified key
-				this.#value[key] = json.get() as JsonInfer<T[typeof key]>;
+				// If the object doesnt have a schema, or the json is required, or the key was specified, attempt to parse it
+				if(this.schema == undefined || json instanceof JsonRequired || key in value)
+					json.parse(value[key]);
 			}
 			// On error, rethrow it
 			catch(error)
@@ -80,8 +92,9 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired> &
 	// Function to update the objects value
 	update(value:Update<T>):void
 	{
-		// Acquire the current value
-		const current:Value<T> = this.get();
+		// Acquire copies of the current value and specified value
+		const current:Value<T> = {...this.get()};
+		value = {...value};
 
 		// Acquire the keys based on whether theres a schema or not
 		const keys:Array<Keys<T>> = Object.keys(this.schema != undefined ? this.schema : value) as Array<Keys<T>>;

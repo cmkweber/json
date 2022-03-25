@@ -9,41 +9,33 @@ type Keys<T extends Enum<T>> = Extract<keyof T, number|string>;
 export class JsonEnum<T extends Enum<T, V>, V = any> extends JsonRequired<Keys<T>>
 {
 	// Enum members
-	#value:Keys<T>;
+	readonly enumeration:T;
+	readonly match?:Keys<T>|undefined;
 
 	// Enum constructor
-	constructor(readonly enumeration:T, readonly match?:Keys<T>, value?:Keys<T>)
+	constructor(enumeration:T, match?:Keys<T>)
 	{
-		// Call creation on json
-		super();
-
 		// Acquire the enumerations keys
-		const keys:Array<string> = Object.keys(this.enumeration);
+		const keys:Array<string> = Object.keys(enumeration);
 
 		// If the specified enumeration is invalid, throw error
 		if(keys.length == 0)
 			throw new Error('Invalid enumeration');
 
-		// Set the value to the first value
-		this.#value = (isNaN(Number(keys[0])) ? keys[0] : Number(keys[0])) as Keys<T>;
+		// Call creation on json
+		super((isNaN(Number(keys[0])) ? keys[0] : Number(keys[0])) as Keys<T>);
 
-		// If a value was specified, set it
-		if(value != undefined)
-			this.set(value);
+		// Store the specified enumeration and match
+		this.enumeration = enumeration;
+		this.match = match;
 	}
 
-	// Function to get the enums value
-	get():Keys<T> { return this.#value; }
-
-	// Function to set the enums value
-	set(value:Keys<T>):void
+	// Function to validate the specified enum
+	validate(value:Keys<T>):void
 	{
 		// If the enum has a match, and the specified value doesnt match, throw error
 		if(this.match != undefined && value != this.match)
 			throw new Error('Invalid match');
-
-		// Store the specified value
-		this.#value = value;
 	}
 
 	// Function to parse the specified value

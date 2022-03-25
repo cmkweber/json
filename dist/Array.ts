@@ -6,14 +6,11 @@ import {JsonRequired} from './Required';
 // Array class
 export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired<Array<JsonInfer<T>>>
 {
-	// Array members
-	#value:Array<JsonInfer<T>> = [];
-
 	// Array constructor
-	constructor(readonly pattern:Array<T> = [], readonly min?:number, readonly max?:number, value?:Array<JsonInfer<T>>)
+	constructor(readonly pattern:Array<T> = [], readonly min?:number, readonly max?:number)
 	{
 		// Call creation on json
-		super();
+		super([]);
 
 		// If a minimum was specified, and its invalid, throw error
 		if(min != undefined && isNaN(min))
@@ -26,17 +23,13 @@ export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired<Ar
 		// If a minimum and maximum were specified, and theyre invalid, throw error
 		if(min != undefined && max != undefined && min > max)
 			throw new Error('Invalid range');
-
-		// If a value was specified, set it
-		if(value != undefined)
-			this.set(value);
 	}
 
-	// Function to get the arrays value
-	get():Array<JsonInfer<T>> { return this.#value; }
+	// Function to set the specified array
+	override set(value:Array<JsonInfer<T>>) { super.set([...value]); }
 
-	// Function to set the arrays value
-	set(value:Array<JsonInfer<T>>):void
+	// Function to validate the specified array
+	validate(value:Array<JsonInfer<T>>):void
 	{
 		// If the array has a minimum, and the specified length is below it, throw error
 		if(this.min != undefined && value.length < this.min)
@@ -46,23 +39,15 @@ export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired<Ar
 		if(this.max != undefined && value.length > this.max)
 			throw new Error('Above maximum');
 
-		// Create an array to store values
-		const values:Array<JsonInfer<T>> = [];
-
-		// Loop through specified arrays values and collect
+		// Loop through specified arrays values and validate
 		for(let i:number = 0; i < value.length; i++)
 		{
-			// Attempt to collect the specified arrays value
+			// Attempt to validate the specified arrays value
 			try
 			{
-				// Acquire this json
+				// Acquire this json and attempt to parse it
 				const json:JsonRequired = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
-
-				// Attempt to parse the specified arrays value
 				json.parse(value[i]);
-
-				// Add value to values
-				values.push(json.get() as JsonInfer<T>);
 			}
 			// On error, rethrow it
 			catch(error)
@@ -75,9 +60,6 @@ export class JsonArray<T extends JsonRequired = JsonAny> extends JsonRequired<Ar
 					throw error;
 			}
 		}
-
-		// Store values
-		this.#value = values;
 	}
 
 	// Function to parse the specified value

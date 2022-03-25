@@ -4,14 +4,11 @@ import {JsonRequired} from './Required';
 // Null class
 export class JsonNull extends JsonRequired<null>
 {
-	// Null members
-	#value:null = null;
+	// Null constructor
+	constructor() { super(null); }
 
-	// Function to get the nulls value
-	get():null { return this.#value; }
-
-	// Function to set the nulls value
-	set(value:null) { this.#value = value; }
+	// Function to validate the specified null
+	validate(value:null) { value; }
 
 	// Function to parse the specified value
 	parse(value:any):void

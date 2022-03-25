@@ -11,25 +11,11 @@ import {JsonString} from './String';
 // Any class
 export class JsonAny extends JsonRequired
 {
-	// Any members
-	#value:JsonValue = null;
-
 	// Any constructor
-	constructor(value?:JsonValue)
-	{
-		// Call creation on json
-		super();
+	constructor() { super(null); }
 
-		// If a value was specified, set it
-		if(value != undefined)
-			this.set(value);
-	}
-
-	// Function to get the anys value
-	get():JsonValue { return this.#value; }
-
-	// Function to set the anys value
-	set(value:JsonValue):void { this.#value = value; }
+	// Function to validate the specified value
+	validate(value:JsonValue): void { value; }
 
 	// Function to parse the specified value
 	parse(value:any):void

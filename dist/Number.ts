@@ -4,14 +4,11 @@ import {JsonRequired} from './Required';
 // Number class
 export class JsonNumber extends JsonRequired<number>
 {
-	// Number members
-	#value:number = 0;
-
 	// Number constructor
-	constructor(readonly integer?:boolean, readonly min?:number, readonly max?:number, value?:number)
+	constructor(readonly integer?:boolean, readonly min?:number, readonly max?:number)
 	{
 		// Call creation on json
-		super();
+		super(integer ? 0 : 0.0);
 
 		// If a minimum was specified, and its invalid, throw error
 		if(min != undefined && (isNaN(min) || (integer != undefined && integer && !Number.isSafeInteger(min))))
@@ -24,17 +21,10 @@ export class JsonNumber extends JsonRequired<number>
 		// If a minimum and maximum were specified, and theyre invalid, throw error
 		if(min != undefined && max != undefined && min > max)
 			throw new Error('Invalid range');
-
-		// If a value was specified, set it
-		if(value != undefined)
-			this.set(value);
 	}
 
-	// Function to get the numbers value
-	get():number { return this.#value; }
-
-	// Function to set the numbers value
-	set(value:number):void
+	// Function to validate the specified number
+	validate(value:number):void
 	{
 		// If the specified value isnt a valid number, throw error
 		if(isNaN(value))
@@ -51,9 +41,6 @@ export class JsonNumber extends JsonRequired<number>
 		// If the number has a maximum, and the specified value is above it, throw error
 		if(this.max != undefined && value > this.max)
 			throw new Error('Above maximum');
-
-		// Store the specified value
-		this.#value = value;
 	}
 
 	// Function to parse the specified value

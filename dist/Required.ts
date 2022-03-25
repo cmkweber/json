@@ -8,10 +8,10 @@ export abstract class JsonRequired<T extends JsonValue = JsonValue> extends Json
 	readonly #required:boolean = true;
 
 	// Required constructor
-	constructor()
+	constructor(value:T)
 	{
 		// Call creation on json
-		super();
+		super(value);
 
 		// Set that the json is required
 		this.#required;
