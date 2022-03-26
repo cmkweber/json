@@ -26,7 +26,7 @@ export abstract class Json<I, O extends JsonValue>
 	}
 
 	// Function to validate the jsons value
-	abstract validate():void;
+	protected abstract validate():void;
 
 	// Function to parse the specified value
 	abstract parse(value:any):void;

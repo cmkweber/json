@@ -15,7 +15,7 @@ export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 	constructor() { super(null); }
 
 	// Function to validate the anys value
-	validate():void {}
+	protected validate():void {}
 
 	// Function to parse the specified value
 	parse(value:any):void

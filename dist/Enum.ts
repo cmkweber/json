@@ -31,7 +31,7 @@ export class JsonEnum<T extends Enum<T>> extends JsonRequired<keyof T, Infer<T>>
 	}
 
 	// Function to validate the enums value
-	validate():void
+	protected validate():void
 	{
 		// If the enum has a match, and the value doesnt match, throw error
 		if(this.match != undefined && this.value != this.match)

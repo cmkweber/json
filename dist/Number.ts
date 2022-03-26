@@ -24,7 +24,7 @@ export class JsonNumber extends JsonRequired<number, number>
 	}
 
 	// Function to validate the numbers value
-	validate():void
+	protected validate():void
 	{
 		// If the value isnt a valid number, throw error
 		if(isNaN(this.value))

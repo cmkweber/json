@@ -8,7 +8,7 @@ export class JsonNull extends JsonRequired<null, null>
 	constructor() { super(null); }
 
 	// Function to validate the nulls value
-	validate():void {}
+	protected validate():void {}
 
 	// Function to parse the specified value
 	parse(value:any):void

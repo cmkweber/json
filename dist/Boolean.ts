@@ -8,7 +8,7 @@ export class JsonBoolean extends JsonRequired<boolean, boolean>
 	constructor(readonly match?:boolean) { super(false); }
 
 	// Function to validate the booleans value
-	validate():void
+	protected validate():void
 	{
 		// If the boolean has a match, and the value doesnt match, throw error
 		if(this.match != undefined && this.value != this.match)

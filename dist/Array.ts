@@ -29,7 +29,7 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 	override set(value:Array<JsonInput<T>>):void { super.set([...value]); }
 
 	// Function to validate the arrays value
-	validate():void
+	protected validate():void
 	{
 		// If the array has a minimum, and the values length is below it, throw error
 		if(this.min != undefined && this.value.length < this.min)

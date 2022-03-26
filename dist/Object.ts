@@ -9,22 +9,24 @@ type Schema<T extends Record<keyof T, Json<any, JsonValue>> = Record<string, Jso
 type Keys<T extends Schema<T>> = Extract<keyof T, string>;
 type RequiredKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? K : never}[keyof T], undefined>;
 type OptionalKeys<T extends Schema<T>> = Exclude<{[K in keyof T]:T[K] extends Exclude<T[keyof T], undefined> ? never : K}[keyof T], undefined>;
-type Restricted<T extends Schema<T>> = {[K in RequiredKeys<T>]:JsonRequired<any, JsonValue>} & {[K in OptionalKeys<T>]?:JsonOptional<any>};
-type Input<T extends Schema<T>> = {[K in keyof T]:JsonInput<T[K]>};
-type Update<T extends Schema<T>> = {[K in RequiredKeys<T>]?:JsonInput<T[K]>} & {[K in OptionalKeys<T>]?:JsonInput<T[K]>|undefined};
-type Output<T extends Schema<T>> = {[K in keyof T]:JsonOutput<T[K]>};
+export type JsonObjectInput<T extends Schema<T>> = {[K in keyof T]:JsonInput<T[K]>};
+export type JsonObjectUpdate<T extends Schema<T>> = {[K in RequiredKeys<T>]?:JsonInput<T[K]>} & {[K in OptionalKeys<T>]?:JsonInput<T[K]>|undefined};
+export type JsonObjectOutput<T extends Schema<T>> = {[K in keyof T]:JsonOutput<T[K]>};
+export type JsonObjectType<T extends Schema<T>> = {[K in RequiredKeys<T>]:JsonRequired<any, JsonValue>} & {[K in OptionalKeys<T>]?:JsonOptional<any>};
+export type JsonObjectTypeAny = Record<string, JsonRequired<any, JsonValue>> & Record<string, JsonOptional<any>>;
+export type JsonObjectSchema<T extends JsonObjectType<T>> = Required<Schema<T>>;
 
 // Object class
-export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<any, JsonValue>> & Record<string, JsonOptional<any>>> extends JsonRequired<Input<T>, Output<T>>
+export class JsonObject<T extends JsonObjectType<T> = JsonObjectTypeAny> extends JsonRequired<JsonObjectInput<T>, JsonObjectOutput<T>>
 {
 	// Object members
-	readonly schema:Required<Schema<T>>|undefined;
+	readonly schema:JsonObjectSchema<T>|undefined;
 
 	// Object constructor
-	constructor(schema?:Required<Schema<T>>)
+	constructor(schema?:JsonObjectSchema<T>)
 	{
 		// Set the object to empty by default
-		const value:Input<T> = {} as Input<T>;
+		const value:JsonObjectInput<T> = {} as JsonObjectInput<T>;
 
 		// If a schema was specified, loop through keys and add to object
 		if(schema != undefined)
@@ -53,7 +55,7 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<an
 	}
 
 	// Function to set the specified value
-	override set(value:Input<T>) { super.set({...value}); }
+	override set(value:JsonObjectInput<T>) { super.set({...value}); }
 
 	// Function to validate the objects value
 	validate():void
@@ -91,10 +93,10 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<an
 	}
 
 	// Function to update the objects value
-	update(value:Update<T>):void
+	update(value:JsonObjectUpdate<T>):void
 	{
 		// Acquire copies of the current value and specified value
-		const current:Input<T> = {...this.value};
+		const current:JsonObjectInput<T> = {...this.value};
 		value = {...value};
 
 		// Acquire the keys based on whether theres a schema or not
@@ -111,11 +113,11 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<an
 				continue;
 
 			// If the key was specified as undefined, remove it from current and specified object
-			if(key in value && value[key as keyof Update<T>] == undefined)
+			if(key in value && value[key as keyof JsonObjectUpdate<T>] == undefined)
 			{
 				// Remove key from current and specified object
 				delete current[key];
-				delete value[key as keyof Update<T>];
+				delete value[key as keyof JsonObjectUpdate<T>];
 			}
 		}
 
@@ -131,7 +133,7 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<an
 			throw new Error('Invalid type');
 
 		// Set the object to empty by default
-		const values:Input<T> = {} as Input<T>;
+		const values:JsonObjectInput<T> = {} as JsonObjectInput<T>;
 
 		// Acquire the keys based on whether theres a schema or not
 		const keys:Array<Keys<T>> = Object.keys(this.schema != undefined ? this.schema : value) as Array<Keys<T>>;
@@ -156,10 +158,10 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<an
 	}
 
 	// Function to serialize the objects value
-	serialize():Output<T>
+	serialize():JsonObjectOutput<T>
 	{
 		// Set the serialized object to empty by default
-		const serialized:Output<T> = {} as Output<T>;
+		const serialized:JsonObjectOutput<T> = {} as JsonObjectOutput<T>;
 
 		// Acquire the objects keys
 		const keys:Array<Keys<T>> = Object.keys(this.value) as Array<Keys<T>>;
@@ -175,7 +177,7 @@ export class JsonObject<T extends Restricted<T> = Record<string, JsonRequired<an
 			json.set(this.value[key]);
 
 			// Add serialized value to serialized object
-			serialized[key] = json.serialize() as Output<T>[keyof T];
+			serialized[key] = json.serialize() as JsonObjectOutput<T>[keyof T];
 		}
 
 		// Return success

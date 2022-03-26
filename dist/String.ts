@@ -8,7 +8,7 @@ export class JsonString extends JsonRequired<string, string>
 	constructor(readonly pattern?:RegExp) { super(''); }
 
 	// Function to validate the strings value
-	validate():void
+	protected validate():void
 	{
 		// If the string has a pattern, and the value doesnt match, throw error
 		if(this.pattern != undefined && !this.pattern.test(this.value))

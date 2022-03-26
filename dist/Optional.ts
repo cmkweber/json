@@ -26,7 +26,7 @@ export class JsonOptional<T extends JsonRequired<any, JsonValue> = JsonAny> exte
 	override set(value:JsonInput<T>) { this.json.set(value); }
 
 	// Function to validate the optionals value
-	validate():void { return this.json.validate(); }
+	protected validate():void {}
 
 	// Function to parse the specified value
 	parse(value:any):void { this.json.parse(value); }
