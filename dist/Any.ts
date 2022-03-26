@@ -27,7 +27,7 @@ export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 		if(typeof value == 'boolean')
 			json = new JsonBoolean();
 		// Else, if the specified value is a null, set the json to null
-		else if(typeof value == null)
+		else if(value == null)
 			json = new JsonNull();
 		// Else, if the specified value is a number, set the json to number
 		else if(typeof value == 'number')
