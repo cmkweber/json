@@ -44,7 +44,7 @@ export class JsonObject<
 
 				// If this json is required, add it to object
 				if(json instanceof JsonRequired)
-					value[key as keyof JsonObjectInput<S>] = json.value;
+					value[key as keyof I] = json.value;
 			}
 		}
 
@@ -78,7 +78,7 @@ export class JsonObject<
 
 				// If the object doesnt have a schema, or the json is required, or the key exists, attempt to parse it
 				if(this.schema === undefined || json instanceof JsonRequired || key in this.value)
-					json.parse(this.value[key as keyof JsonObjectInput<S>]);
+					json.parse(this.value[key as keyof I]);
 			}
 			// On error, rethrow it
 			catch(error)
@@ -109,15 +109,22 @@ export class JsonObject<
 			// Acquire this key
 			const key:string = keys[k];
 
-			// If the key is required, skip it
-			if(this.schema !== undefined && (this.schema[key as keyof S] as Json<any, JsonValue>) instanceof JsonRequired)
-				continue;
+			// If the object has a schema, determine if the json is required
+			if(this.schema !== undefined)
+			{
+				// Acquire this json
+				const json:Json<any, JsonValue> = this.schema[key as keyof S];
+
+				// If this json is required, skip it
+				if(json instanceof JsonRequired)
+					continue;
+			}
 
 			// If the key was specified as undefined, remove it from current and specified object
 			if(key in value && value[key as keyof JsonObjectUpdate<S>] === undefined)
 			{
 				// Remove key from current and specified object
-				delete current[key as keyof JsonObjectInput<S>];
+				delete current[key as keyof I];
 				delete value[key as keyof JsonObjectUpdate<S>];
 			}
 		}
@@ -145,13 +152,20 @@ export class JsonObject<
 			// Acquire this key
 			const key:string = keys[k];
 
-			// If the object has a schema, and this key is required but not specified, throw error
-			if(this.schema !== undefined && (this.schema[key as keyof S] as Json<any, JsonValue>) instanceof JsonRequired && (!(key in value) || value[key] === undefined))
-				throw new Error('Missing key ' + key);
+			// If the object has a schema, determine if the json is required
+			if(this.schema !== undefined)
+			{
+				// Acquire this json
+				const json:Json<any, JsonValue> = this.schema[key as keyof S];
+
+				// If the json is required, and this key wasnt specified, throw error
+				if(json instanceof JsonRequired && (!(key in value) || value[key] === undefined))
+					throw new Error('Missing key ' + key);
+			}
 
 			// If the objects key was defined, store it
 			if(value[key] !== undefined)
-				values[key as keyof JsonObjectInput<S>] = value[key];
+				values[key as keyof I] = value[key];
 		}
 
 		// Set the specified value
@@ -172,10 +186,10 @@ export class JsonObject<
 		{
 			// Acquire this key and json
 			const key:string = keys[k];
-			const json:Json<any, JsonValue> = this.schema !== undefined ? (this.schema[key as keyof S] as Json<any, JsonValue>) : new JsonAny();
+			const json:Json<any, JsonValue> = this.schema !== undefined ? this.schema[key as keyof S] : new JsonAny();
 
 			// Set json to this value
-			json.set(this.value[key as keyof JsonObjectInput<S>]);
+			json.set(this.value[key as keyof I]);
 
 			// Add serialized value to serialized object
 			serialized[key as keyof O] = json.serialize() as O[keyof O];
