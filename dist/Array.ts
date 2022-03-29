@@ -52,12 +52,12 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 			// On error, rethrow it
 			catch(error)
 			{
-				// If the error is an error, rethrow it with index information
+				// If the error is an error, prepend index information
 				if(error instanceof Error)
-					throw new Error('[' + i.toString() + ']: ' + error.message);
-				// Else, rethrow error
-				else
-					throw error;
+					error.message = '[' + i.toString() + ']: ' + error.message;
+
+				// Rethrow error
+				throw error;
 			}
 		}
 	}

@@ -83,12 +83,12 @@ export class JsonObject<
 			// On error, rethrow it
 			catch(error)
 			{
-				// If the error is an error, rethrow it with key information
+				// If the error is an error, prepend key information
 				if(error instanceof Error)
-					throw new Error('{' + key + '}: ' + error.message);
-				// Else, rethrow error
-				else
-					throw error;
+					error.message = '{' + key + '}: ' + error.message;
+
+				// Rethrow error
+				throw error;
 			}
 		}
 	}
