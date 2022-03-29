@@ -96,9 +96,11 @@ export class JsonObject<
 	// Function to update the objects value
 	update(value:JsonObjectUpdate<S>):void
 	{
-		// Acquire copies of the current value and specified value
+		// Acquire the current value
 		const current:I = {...this.value};
-		value = {...value};
+
+		// Set the object to empty by default
+		const values:I = {} as I;
 
 		// Acquire the keys based on whether theres a schema or not
 		const keys:Array<string> = Object.keys(this.schema !== undefined ? this.schema : value);
@@ -106,31 +108,27 @@ export class JsonObject<
 		// Loop through keys and attempt to update
 		for(let k:number = 0; k < keys.length; k++)
 		{
-			// Acquire this key
+			// Acquire this key and json
 			const key:string = keys[k];
+			const json:Json<any, JsonValue> = this.schema !== undefined ? this.schema[key as keyof S] : new JsonAny();
 
-			// If the object has a schema, determine if the json is required
-			if(this.schema !== undefined)
+			// If the object doesnt have a schema, or the json is optional, and the key was specified as undefined, remove it from current and skip it
+			if((this.schema === undefined || json instanceof JsonOptional) && key in value && value[key as keyof JsonObjectUpdate<S>] === undefined)
 			{
-				// Acquire this json
-				const json:Json<any, JsonValue> = this.schema[key as keyof S];
-
-				// If this json is required, skip it
-				if(json instanceof JsonRequired)
-					continue;
-			}
-
-			// If the key was specified as undefined, remove it from current and specified object
-			if(key in value && value[key as keyof JsonObjectUpdate<S>] === undefined)
-			{
-				// Remove key from current and specified object
+				// Remove key from current value and skip it
 				delete current[key as keyof I];
-				delete value[key as keyof JsonObjectUpdate<S>];
+				continue;
 			}
+
+			// Attempt to parse this json
+			json.parse(value[key as keyof JsonObjectUpdate<S>]);
+
+			// Store key
+			values[key as keyof I] = json.value;
 		}
 
 		// Set the specified value
-		this.set({...current, ...value});
+		this.set({...current, ...values});
 	}
 
 	// Function to parse the specified value
@@ -149,23 +147,27 @@ export class JsonObject<
 		// Loop through keys and attempt to parse
 		for(let k:number = 0; k < keys.length; k++)
 		{
-			// Acquire this key
+			// Acquire this key and json
 			const key:string = keys[k];
+			const json:Json<any, JsonValue> = this.schema !== undefined ? this.schema[key as keyof S] : new JsonAny();
 
 			// If the object has a schema, determine if the json is required
 			if(this.schema !== undefined)
 			{
-				// Acquire this json
-				const json:Json<any, JsonValue> = this.schema[key as keyof S];
-
 				// If the json is required, and this key wasnt specified, throw error
 				if(json instanceof JsonRequired && (!(key in value) || value[key] === undefined))
 					throw new Error('Missing key ' + key);
 			}
 
-			// If the objects key was defined, store it
-			if(value[key] !== undefined)
-				values[key as keyof I] = value[key];
+			// If the objects key wasnt defined, skip it
+			if(value[key] === undefined)
+				continue;
+
+			// Attempt to parse this json
+			json.parse(value[key]);
+
+			// Store key
+			values[key as keyof I] = json.value;
 		}
 
 		// Set the specified value
