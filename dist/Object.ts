@@ -30,7 +30,7 @@ export class JsonObject<
 		const value:I = {} as I;
 
 		// If a schema was specified, loop through keys and add to object
-		if(schema != undefined)
+		if(schema !== undefined)
 		{
 			// Acquire the schemas keys
 			const keys:Array<string> = Object.keys(schema);
@@ -62,7 +62,7 @@ export class JsonObject<
 	validate():void
 	{
 		// Acquire the keys based on whether theres a schema or not
-		const keys:Array<string> = Object.keys(this.schema != undefined ? this.schema : this.value);
+		const keys:Array<string> = Object.keys(this.schema !== undefined ? this.schema : this.value);
 
 		// Loop through keys and attempt to parse
 		for(let k:number = 0; k < keys.length; k++)
@@ -74,10 +74,10 @@ export class JsonObject<
 			try
 			{
 				// Acquire this json
-				const json:Json<any, JsonValue> = this.schema != undefined ? this.schema[key as keyof S] : new JsonAny();
+				const json:Json<any, JsonValue> = this.schema !== undefined ? this.schema[key as keyof S] : new JsonAny();
 
 				// If the object doesnt have a schema, or the json is required, or the key exists, attempt to parse it
-				if(this.schema == undefined || json instanceof JsonRequired || key in this.value)
+				if(this.schema === undefined || json instanceof JsonRequired || key in this.value)
 					json.parse(this.value[key as keyof JsonObjectInput<S>]);
 			}
 			// On error, rethrow it
@@ -101,7 +101,7 @@ export class JsonObject<
 		value = {...value};
 
 		// Acquire the keys based on whether theres a schema or not
-		const keys:Array<string> = Object.keys(this.schema != undefined ? this.schema : value);
+		const keys:Array<string> = Object.keys(this.schema !== undefined ? this.schema : value);
 
 		// Loop through keys and attempt to update
 		for(let k:number = 0; k < keys.length; k++)
@@ -110,11 +110,11 @@ export class JsonObject<
 			const key:string = keys[k];
 
 			// If the key is required, skip it
-			if(this.schema != undefined && (this.schema[key as keyof S] as Json<any, JsonValue>) instanceof JsonRequired)
+			if(this.schema !== undefined && (this.schema[key as keyof S] as Json<any, JsonValue>) instanceof JsonRequired)
 				continue;
 
 			// If the key was specified as undefined, remove it from current and specified object
-			if(key in value && value[key as keyof JsonObjectUpdate<S>] == undefined)
+			if(key in value && value[key as keyof JsonObjectUpdate<S>] === undefined)
 			{
 				// Remove key from current and specified object
 				delete current[key as keyof JsonObjectInput<S>];
@@ -130,14 +130,14 @@ export class JsonObject<
 	parse(value:any):void
 	{
 		// If the specified value isnt an object, throw error
-		if(typeof value != 'object')
+		if(typeof value !== 'object')
 			throw new Error('Invalid type');
 
 		// Set the object to empty by default
 		const values:I = {} as I;
 
 		// Acquire the keys based on whether theres a schema or not
-		const keys:Array<string> = Object.keys(this.schema != undefined ? this.schema : value);
+		const keys:Array<string> = Object.keys(this.schema !== undefined ? this.schema : value);
 
 		// Loop through keys and attempt to parse
 		for(let k:number = 0; k < keys.length; k++)
@@ -146,11 +146,11 @@ export class JsonObject<
 			const key:string = keys[k];
 
 			// If the object has a schema, and this key is required but not specified, throw error
-			if(this.schema != undefined && (this.schema[key as keyof S] as Json<any, JsonValue>) instanceof JsonRequired && (!(key in value) || value[key] == undefined))
+			if(this.schema !== undefined && (this.schema[key as keyof S] as Json<any, JsonValue>) instanceof JsonRequired && (!(key in value) || value[key] === undefined))
 				throw new Error('Missing key ' + key);
 
 			// If the objects key was defined, store it
-			if(value[key] != undefined)
+			if(value[key] !== undefined)
 				values[key as keyof JsonObjectInput<S>] = value[key];
 		}
 
@@ -172,7 +172,7 @@ export class JsonObject<
 		{
 			// Acquire this key and json
 			const key:string = keys[k];
-			const json:Json<any, JsonValue> = this.schema != undefined ? (this.schema[key as keyof S] as Json<any, JsonValue>) : new JsonAny();
+			const json:Json<any, JsonValue> = this.schema !== undefined ? (this.schema[key as keyof S] as Json<any, JsonValue>) : new JsonAny();
 
 			// Set json to this value
 			json.set(this.value[key as keyof JsonObjectInput<S>]);

@@ -18,7 +18,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 		const keys:Array<keyof T> = Object.keys(enumeration) as Array<keyof T>;
 
 		// If the specified enumeration is invalid, throw error
-		if(keys.length == 0)
+		if(keys.length === 0)
 			throw new Error('Invalid enumeration');
 
 		// Call creation on json
@@ -33,7 +33,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 	protected validate():void
 	{
 		// If the enum has a match, and the value doesnt match, throw error
-		if(this.match != undefined && this.value != this.match)
+		if(this.match !== undefined && this.value !== this.match)
 			throw new Error('Invalid match');
 	}
 
@@ -41,7 +41,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 	parse(value:any):void
 	{
 		// If the specified value isnt a number or string, throw error
-		if(typeof value != 'number' && typeof value != 'string')
+		if(typeof value !== 'number' && typeof value !== 'string')
 			throw new Error('Invalid type');
 
 		// Acquire the enumerations keys
@@ -54,7 +54,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 			const key:keyof T = keys[k];
 
 			// If the specified value is this keys value, set it and return early
-			if(value == this.enumeration[key])
+			if(value === this.enumeration[key])
 			{
 				// Set the specified value
 				this.set(key);

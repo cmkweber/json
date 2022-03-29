@@ -11,7 +11,7 @@ export class JsonBoolean extends JsonRequired<boolean, boolean>
 	protected validate():void
 	{
 		// If the boolean has a match, and the value doesnt match, throw error
-		if(this.match != undefined && this.value != this.match)
+		if(this.match !== undefined && this.value !== this.match)
 			throw new Error('Invalid match');
 	}
 
@@ -19,7 +19,7 @@ export class JsonBoolean extends JsonRequired<boolean, boolean>
 	parse(value:any):void
 	{
 		// If the specified value isnt a boolean, throw error
-		if(typeof value != 'boolean')
+		if(typeof value !== 'boolean')
 			throw new Error('Invalid type');
 
 		// Set the specified value

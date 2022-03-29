@@ -13,15 +13,15 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		super([]);
 
 		// If a minimum was specified, and its invalid, throw error
-		if(min != undefined && (isNaN(min) || !Number.isSafeInteger(min) || min < 0))
+		if(min !== undefined && (isNaN(min) || !Number.isSafeInteger(min) || min < 0))
 			throw new Error('Invalid minimum');
 
 		// If a maximum was specified, and its invalid, throw error
-		if(max != undefined && (isNaN(max) || !Number.isSafeInteger(max) || max < 0))
+		if(max !== undefined && (isNaN(max) || !Number.isSafeInteger(max) || max < 0))
 			throw new Error('Invalid maximum');
 
 		// If a minimum and maximum were specified, and theyre invalid, throw error
-		if(min != undefined && max != undefined && min > max)
+		if(min !== undefined && max !== undefined && min > max)
 			throw new Error('Invalid range');
 	}
 
@@ -32,11 +32,11 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 	protected validate():void
 	{
 		// If the array has a minimum, and the values length is below it, throw error
-		if(this.min != undefined && this.value.length < this.min)
+		if(this.min !== undefined && this.value.length < this.min)
 			throw new Error('Below minimum');
 
 		// If the array has a maximum, and the values length is above it, throw error
-		if(this.max != undefined && this.value.length > this.max)
+		if(this.max !== undefined && this.value.length > this.max)
 			throw new Error('Above maximum');
 
 		// Loop through arrays values and validate
