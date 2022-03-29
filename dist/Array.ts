@@ -13,11 +13,11 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		super([]);
 
 		// If a minimum was specified, and its invalid, throw error
-		if(min != undefined && isNaN(min))
+		if(min != undefined && (isNaN(min) || !Number.isSafeInteger(min) || min < 0))
 			throw new Error('Invalid minimum');
 
 		// If a maximum was specified, and its invalid, throw error
-		if(max != undefined && isNaN(max))
+		if(max != undefined && (isNaN(max) || !Number.isSafeInteger(max) || max < 0))
 			throw new Error('Invalid maximum');
 
 		// If a minimum and maximum were specified, and theyre invalid, throw error
