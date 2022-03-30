@@ -102,8 +102,8 @@ export class JsonObject<
 		// Set the object to empty by default
 		const values:I = {} as I;
 
-		// Acquire the keys based on whether theres a schema or not
-		const keys:Array<string> = Object.keys(this.schema !== undefined ? this.schema : value);
+		// Acquire the specified keys
+		const keys:Array<string> = Object.keys(value);
 
 		// Loop through keys and attempt to update
 		for(let k:number = 0; k < keys.length; k++)
