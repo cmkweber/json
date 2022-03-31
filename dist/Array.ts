@@ -4,10 +4,10 @@ import {JsonInput, JsonOutput, JsonValue} from './Json';
 import {JsonRequired} from './Required';
 
 // Array class
-export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends JsonRequired<Array<JsonInput<T>>, Array<JsonOutput<T>>>
+export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends JsonRequired<ReadonlyArray<JsonInput<T>>, Array<JsonOutput<T>>>
 {
 	// Array constructor
-	constructor(readonly pattern:Array<T> = [], readonly min?:number, readonly max?:number)
+	constructor(readonly pattern:ReadonlyArray<T> = [], readonly min?:number, readonly max?:number)
 	{
 		// Call creation on json
 		super([]);
@@ -26,7 +26,7 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 	}
 
 	// Function to set the specified array
-	override set(value:Array<JsonInput<T>>):void { super.set([...value]); }
+	override set(value:ReadonlyArray<JsonInput<T>>):void { super.set([...value]); }
 
 	// Function to validate the arrays value
 	protected validate():void
