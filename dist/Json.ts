@@ -18,11 +18,11 @@ export abstract class Json<I, O extends JsonValue>
 	// Function to set the specified value
 	set(value:I):void
 	{
-		// Attempt to validate the specified value
-		this.validate();
-
 		// Store the specified value
 		this.#value = value;
+
+		// Attempt to validate the specified value
+		this.validate();
 	}
 
 	// Function to validate the jsons value
