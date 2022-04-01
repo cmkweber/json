@@ -88,7 +88,7 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		const values:Array<JsonInput<T>> = [];
 
 		// Loop through arrays values and attempt to parse
-		for(let v:number = 0; v < this.value.length; v++)
+		for(let v:number = 0; v < value.length; v++)
 		{
 			// Attempt to parse the arrays value
 			try
@@ -97,7 +97,7 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 				const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[v % this.pattern.length] : new JsonAny();
 
 				// Attempt to parse json
-				json.parse(this.value[v]);
+				json.parse(value[v]);
 
 				// Add json to values
 				values.push(json.value);
