@@ -9,9 +9,6 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 	// Array constructor
 	constructor(readonly pattern:ReadonlyArray<T> = [], readonly min?:number, readonly max?:number)
 	{
-		// Call creation on json
-		super([]);
-
 		// If a minimum was specified, and its invalid, throw error
 		if(min !== undefined && (isNaN(min) || !Number.isSafeInteger(min) || min < 0))
 			throw new Error('Invalid minimum');
@@ -23,6 +20,24 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		// If a minimum and maximum were specified, and theyre invalid, throw error
 		if(min !== undefined && max !== undefined && min > max)
 			throw new Error('Invalid range');
+
+		// Create a container to store values
+		const values:Array<JsonInput<T>> = [];
+
+		// If a mininum was specified, loop through and create minimum values
+		if(min !== undefined)
+		{
+			// Loop through minimum and create values
+			for(let v:number = 0; v < min; v++)
+			{
+				// Acquire this json and add it to values
+				const json:JsonRequired<any, JsonValue> = pattern.length > 0 ? pattern[v % pattern.length] : new JsonAny();
+				values.push(json.value);
+			}
+		}
+
+		// Call creation on json
+		super(values);
 	}
 
 	// Function to set the specified array
@@ -40,21 +55,21 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 			throw new Error('Above maximum');
 
 		// Loop through arrays values and validate
-		for(let i:number = 0; i < this.value.length; i++)
+		for(let v:number = 0; v < this.value.length; v++)
 		{
 			// Attempt to validate the arrays value
 			try
 			{
 				// Acquire this json and attempt to parse it
-				const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
-				json.parse(this.value[i]);
+				const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[v % this.pattern.length] : new JsonAny();
+				json.parse(this.value[v]);
 			}
 			// On error, rethrow it
 			catch(error)
 			{
 				// If the error is an error, prepend index information
 				if(error instanceof Error)
-					error.message = '[' + i.toString() + ']: ' + error.message;
+					error.message = '[' + v.toString() + ']: ' + error.message;
 
 				// Rethrow error
 				throw error;
@@ -69,22 +84,22 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		if(!Array.isArray(value))
 			throw new Error('Invalid type');
 
-		// Create an array to store values
+		// Create a container to store values
 		const values:Array<JsonInput<T>> = [];
 
 		// Loop through arrays values and attempt to parse
-		for(let i:number = 0; i < this.value.length; i++)
+		for(let v:number = 0; v < this.value.length; v++)
 		{
 			// Attempt to parse the arrays value
 			try
 			{
 				// Acquire this json
-				const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
+				const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[v % this.pattern.length] : new JsonAny();
 
 				// Attempt to parse json
-				json.parse(this.value[i]);
+				json.parse(this.value[v]);
 
-				// Add json to array
+				// Add json to values
 				values.push(json.value);
 			}
 			// On error, rethrow it
@@ -92,7 +107,7 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 			{
 				// If the error is an error, prepend index information
 				if(error instanceof Error)
-					error.message = '[' + i.toString() + ']: ' + error.message;
+					error.message = '[' + v.toString() + ']: ' + error.message;
 
 				// Rethrow error
 				throw error;
@@ -110,13 +125,13 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		const serialized:Array<JsonOutput<T>> = [];
 
 		// Loop through arrays values and serialize
-		for(let i:number = 0; i < this.value.length; i++)
+		for(let v:number = 0; v < this.value.length; v++)
 		{
 			// Acquire this json
-			const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
+			const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[v % this.pattern.length] : new JsonAny();
 
 			// Set json to this value
-			json.set(this.value[i]);
+			json.set(this.value[v]);
 
 			// Add serialized value to serialized values
 			serialized.push(json.serialize() as JsonOutput<T>);

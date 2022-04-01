@@ -7,9 +7,6 @@ export class JsonNumber extends JsonRequired<number, number>
 	// Number constructor
 	constructor(readonly integer?:boolean, readonly min?:number, readonly max?:number)
 	{
-		// Call creation on json
-		super(integer ? 0 : 0.0);
-
 		// If a minimum was specified, and its invalid, throw error
 		if(min !== undefined && (isNaN(min) || (integer !== undefined && integer && !Number.isSafeInteger(min))))
 			throw new Error('Invalid minimum');
@@ -21,6 +18,9 @@ export class JsonNumber extends JsonRequired<number, number>
 		// If a minimum and maximum were specified, and theyre invalid, throw error
 		if(min !== undefined && max !== undefined && min > max)
 			throw new Error('Invalid range');
+
+		// Call creation on json
+		super(min !== undefined ? min : (integer ? 0 : 0.0));
 	}
 
 	// Function to validate the numbers value

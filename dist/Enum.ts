@@ -22,7 +22,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 			throw new Error('Invalid enumeration');
 
 		// Call creation on json
-		super(keys[0]);
+		super(match !== undefined ? match : keys[0]);
 
 		// Store the specified enumeration and match
 		this.enumeration = enumeration;

@@ -5,7 +5,7 @@ import {JsonRequired} from './Required';
 export class JsonBoolean extends JsonRequired<boolean, boolean>
 {
 	// Boolean constructor
-	constructor(readonly match?:boolean) { super(false); }
+	constructor(readonly match?:boolean) { super(match !== undefined ? match : false); }
 
 	// Function to validate the booleans value
 	protected validate():void

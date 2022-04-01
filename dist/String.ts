@@ -5,7 +5,15 @@ import {JsonRequired} from './Required';
 export class JsonString extends JsonRequired<string, string>
 {
 	// String constructor
-	constructor(readonly pattern?:RegExp) { super(''); }
+	constructor(readonly pattern?:RegExp, initial?:string)
+	{
+		// If a pattern was specified, but an initial wasnt, throw error
+		if(pattern !== undefined && initial === undefined)
+			throw new Error('Invalid initial');
+
+		// Call creation on json
+		super(initial !== undefined ? initial : '');
+	}
 
 	// Function to validate the strings value
 	protected validate():void
