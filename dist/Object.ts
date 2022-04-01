@@ -67,15 +67,13 @@ export class JsonObject<
 		// Loop through keys and attempt to parse
 		for(let k:number = 0; k < keys.length; k++)
 		{
-			// Acquire this key
+			// Acquire this key and json
 			const key:string = keys[k];
+			const json:Json<any, JsonValue> = this.schema !== undefined ? this.schema[key as keyof S] : new JsonAny();
 
-			// Attempt to parse the objects key
+			// Attempt to parse this json
 			try
 			{
-				// Acquire this json
-				const json:Json<any, JsonValue> = this.schema !== undefined ? this.schema[key as keyof S] : new JsonAny();
-
 				// If the object doesnt have a schema, or the json is required, or the key exists, attempt to parse it
 				if(this.schema === undefined || json instanceof JsonRequired || key in this.value)
 					json.parse(this.value[key as keyof I]);
@@ -123,7 +121,7 @@ export class JsonObject<
 			// Attempt to parse this json
 			json.parse(value[key as keyof JsonObjectUpdate<S>]);
 
-			// Store key
+			// Add json to object
 			values[key as keyof I] = json.value;
 		}
 
@@ -164,10 +162,24 @@ export class JsonObject<
 				continue;
 
 			// Attempt to parse this json
-			json.parse(value[key]);
+			try
+			{
+				// Attempt to parse this json
+				json.parse(value[key]);
 
-			// Store key
-			values[key as keyof I] = json.value;
+				// Add json to object
+				values[key as keyof I] = json.value;
+			}
+			// On error, rethrow it
+			catch(error)
+			{
+				// If the error is an error, prepend key information
+				if(error instanceof Error)
+					error.message = '{' + key + '}: ' + error.message;
+
+				// Rethrow error
+				throw error;
+			}
 		}
 
 		// Set the specified value

@@ -69,8 +69,38 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		if(!Array.isArray(value))
 			throw new Error('Invalid type');
 
+		// Create an array to store values
+		const values:Array<JsonInput<T>> = [];
+
+		// Loop through arrays values and attempt to parse
+		for(let i:number = 0; i < this.value.length; i++)
+		{
+			// Attempt to parse the arrays value
+			try
+			{
+				// Acquire this json
+				const json:JsonRequired<any, JsonValue> = this.pattern.length > 0 ? this.pattern[i % this.pattern.length] : new JsonAny();
+
+				// Attempt to parse json
+				json.parse(this.value[i]);
+
+				// Add json to array
+				values.push(json.value);
+			}
+			// On error, rethrow it
+			catch(error)
+			{
+				// If the error is an error, prepend index information
+				if(error instanceof Error)
+					error.message = '[' + i.toString() + ']: ' + error.message;
+
+				// Rethrow error
+				throw error;
+			}
+		}
+
 		// Set the specified value
-		this.set(value);
+		this.set(values);
 	}
 
 	// Function to serialize the arrays value
