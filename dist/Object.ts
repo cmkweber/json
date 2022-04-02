@@ -5,17 +5,16 @@ import {JsonOptional} from './Optional';
 import {JsonRequired} from './Required';
 
 // Object types
-type RequiredKeys<T extends JsonObjectSchema<T>> = Exclude<{[K in keyof T]:T[K] extends JsonRequired<any, JsonValue> ? K : never}[keyof T], undefined>;
-type OptionalKeys<T extends JsonObjectSchema<T>> = Exclude<{[K in keyof T]:T[K] extends JsonOptional<any> ? K : never}[keyof T], undefined>;
-export type JsonObjectInput<T extends JsonObjectSchema<T>> = {[K in RequiredKeys<T>]:JsonInput<T[K]>} & {[K in OptionalKeys<T>]?:JsonInput<T[K]>};
-export type JsonObjectUpdate<T extends JsonObjectSchema<T>> = {[K in RequiredKeys<T>]?:JsonInput<T[K]>} & {[K in OptionalKeys<T>]?:JsonInput<T[K]>|undefined};
-export type JsonObjectOutput<T extends JsonObjectSchema<T>> = {[K in RequiredKeys<T>]:JsonOutput<T[K]>} & {[K in OptionalKeys<T>]?:JsonOutput<T[K]>};
-export type JsonObjectSchema<T extends Record<string, Json<any, JsonValue>>> = {[K in keyof T]:T[K]};
-export type JsonObjectSchemaAny = Record<string, Json<any, JsonValue>>;
+type RequiredKeys<T extends JsonObjectSchema> = Exclude<{[K in keyof T]:T[K] extends JsonRequired<any, JsonValue> ? K : never}[keyof T], undefined>;
+type OptionalKeys<T extends JsonObjectSchema> = Exclude<{[K in keyof T]:T[K] extends JsonOptional<any> ? K : never}[keyof T], undefined>;
+export type JsonObjectInput<T extends JsonObjectSchema> = {[K in RequiredKeys<T>]:JsonInput<T[K]>} & {[K in OptionalKeys<T>]?:JsonInput<T[K]>};
+export type JsonObjectUpdate<T extends JsonObjectSchema> = {[K in RequiredKeys<T>]?:JsonInput<T[K]>} & {[K in OptionalKeys<T>]?:JsonInput<T[K]>|undefined};
+export type JsonObjectOutput<T extends JsonObjectSchema> = {[K in RequiredKeys<T>]:JsonOutput<T[K]>} & {[K in OptionalKeys<T>]?:JsonOutput<T[K]>};
+export type JsonObjectSchema = Record<string, Json<any, JsonValue>>;
 
 // Object class
 export class JsonObject<
-	S extends JsonObjectSchema<S> = JsonObjectSchemaAny,
+	S extends JsonObjectSchema = JsonObjectSchema,
 	I extends JsonObjectInput<S> = JsonObjectInput<S>,
 	O extends {[key:string]:JsonValue} = JsonObjectOutput<S>
 > extends JsonRequired<I, O>
