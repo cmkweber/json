@@ -24,10 +24,10 @@ export class JsonObject<
 	readonly schema:S|undefined;
 
 	// Object constructor
-	constructor(schema?:S)
+	constructor(schema?:S, value?:I)
 	{
-		// Set the object to empty by default
-		const value:I = {} as I;
+		// Acquire the specified value or create an empty object
+		const values:I = value !== undefined ? value : {} as I;
 
 		// If a schema was specified, loop through keys and add to object
 		if(schema !== undefined)
@@ -44,15 +44,18 @@ export class JsonObject<
 
 				// If this json is required, add it to object
 				if(json instanceof JsonRequired)
-					value[key as keyof I] = json.value;
+					values[key as keyof I] = json.value;
 			}
 		}
 
 		// Call creation on json
-		super(value);
+		super(values);
 
 		// Store the specified schema
 		this.schema = schema;
+
+		// Attempt to validate object
+		this.validate();
 	}
 
 	// Function to set the specified value

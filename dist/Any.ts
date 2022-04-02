@@ -12,7 +12,14 @@ import {JsonString} from './String';
 export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 {
 	// Any constructor
-	constructor() { super(null); }
+	constructor(value?:JsonValue)
+	{
+		// Call creation on json
+		super(value !== undefined ? value : null);
+
+		// Attempt to validate any
+		this.validate();
+	}
 
 	// Function to validate the anys value
 	protected validate():void {}

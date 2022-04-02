@@ -7,7 +7,7 @@ import {JsonRequired} from './Required';
 export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends JsonRequired<Array<JsonInput<T>>, Array<JsonOutput<T>>>
 {
 	// Array constructor
-	constructor(readonly pattern:ReadonlyArray<T> = [], readonly min?:number, readonly max?:number)
+	constructor(readonly pattern:ReadonlyArray<T> = [], readonly min?:number, readonly max?:number, value?:Array<JsonInput<T>>)
 	{
 		// If a minimum was specified, and its invalid, throw error
 		if(min !== undefined && (isNaN(min) || !Number.isSafeInteger(min) || min < 0))
@@ -21,16 +21,16 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		if(min !== undefined && max !== undefined && min > max)
 			throw new Error('Invalid range');
 
-		// Create a container to store values
-		const values:Array<JsonInput<T>> = [];
+		// Acquire the specified value or create an empty container
+		const values:Array<JsonInput<T>> = value !== undefined ? value : [];
 
-		// If a mininum was specified, loop through and create minimum values
-		if(min !== undefined)
+		// If a value wasnt specified, and a mininum was, loop through and create minimum values
+		if(value === undefined && min !== undefined)
 		{
 			// Loop through minimum and create values
 			for(let v:number = 0; v < min; v++)
 			{
-				// Acquire this json and add it to values
+				// Acquire this json and add it to value
 				const json:JsonRequired<any, JsonValue> = pattern.length > 0 ? pattern[v % pattern.length] : new JsonAny();
 				values.push(json.value);
 			}
@@ -38,6 +38,9 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 
 		// Call creation on json
 		super(values);
+
+		// Attempt to validate array
+		this.validate();
 	}
 
 	// Function to set the specified array
