@@ -10,8 +10,9 @@ export class JsonBoolean extends JsonRequired<boolean, boolean>
 		// Call creation on json
 		super(value !== undefined ? value : (match !== undefined ? match : false));
 
-		// Attempt to validate boolean
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to validate the booleans value

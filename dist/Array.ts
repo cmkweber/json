@@ -39,8 +39,9 @@ export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends
 		// Call creation on json
 		super(values);
 
-		// Attempt to validate array
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to set the specified array

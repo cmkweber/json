@@ -28,8 +28,9 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 		this.enumeration = enumeration;
 		this.match = match;
 
-		// Attempt to validate enum
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to validate the enums value

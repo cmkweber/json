@@ -21,8 +21,9 @@ export class JsonOptional<T extends JsonRequired<any, JsonValue> = JsonAny> exte
 		// Set that the json is optional
 		this.#required;
 
-		// Attempt to validate optional
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to set the optionals value

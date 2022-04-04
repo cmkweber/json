@@ -53,8 +53,9 @@ export class JsonObject<
 		// Store the specified schema
 		this.schema = schema;
 
-		// Attempt to validate object
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to set the specified value

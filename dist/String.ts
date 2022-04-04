@@ -14,8 +14,9 @@ export class JsonString extends JsonRequired<string, string>
 		// Call creation on json
 		super(value !== undefined ? value : '');
 
-		// Attempt to validate string
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to validate the strings value

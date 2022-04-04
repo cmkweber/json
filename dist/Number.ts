@@ -22,8 +22,9 @@ export class JsonNumber extends JsonRequired<number, number>
 		// Call creation on json
 		super(value !== undefined ? value : (min !== undefined ? min : (integer ? 0 : 0.0)));
 
-		// Attempt to validate number
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to validate the numbers value

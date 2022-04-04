@@ -17,8 +17,9 @@ export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 		// Call creation on json
 		super(value !== undefined ? value : null);
 
-		// Attempt to validate any
-		this.validate();
+		// If a value was specified, attempt to validate it
+		if(value !== undefined)
+			this.validate();
 	}
 
 	// Function to validate the anys value
