@@ -15,14 +15,14 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 	constructor(enumeration:T, match?:keyof T, value?:keyof T)
 	{
 		// Acquire the enumerations keys
-		const keys:Array<keyof T> = Object.keys(enumeration) as Array<keyof T>;
+		const keys:Array<string> = Object.keys(enumeration);
 
 		// If the specified enumeration is invalid, throw error
 		if(keys.length === 0)
 			throw new Error('Invalid enumeration');
 
 		// Call creation on json
-		super(value !== undefined ? value : (match !== undefined ? match : keys[0]));
+		super(value !== undefined ? value : (match !== undefined ? match : keys[0] as keyof T));
 
 		// Store the specified enumeration and match
 		this.enumeration = enumeration;
@@ -49,19 +49,19 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 			throw new Error('Invalid type');
 
 		// Acquire the enumerations keys
-		const keys:Array<keyof T> = Object.keys(this.enumeration) as Array<keyof T>;
+		const keys:Array<string> = Object.keys(this.enumeration);
 
 		// Loop through keys and attempt to set the specified value
 		for(let k:number = 0; k < keys.length; k++)
 		{
 			// Acquire this key
-			const key:keyof T = keys[k];
+			const key:string = keys[k];
 
-			// If the specified value is this keys value, set it and return early
-			if(value === this.enumeration[key])
+			// If the specified value is this key, set it and return early
+			if(String(value) === key || String(value) === String(this.enumeration[key as keyof T]))
 			{
 				// Set the specified value
-				this.set(key);
+				this.set(key as keyof T);
 				return;
 			}
 		}
