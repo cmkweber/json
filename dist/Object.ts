@@ -29,7 +29,7 @@ export class JsonObject<
 		const values:I = value !== undefined ? value : {} as I;
 
 		// If a value wasnt specified, and a schema was, loop through keys and add to object
-		if(value !== undefined && schema !== undefined)
+		if(value === undefined && schema !== undefined)
 		{
 			// Acquire the schemas keys
 			const keys:Array<string> = Object.keys(schema);
