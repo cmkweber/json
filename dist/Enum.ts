@@ -11,7 +11,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 	readonly enumeration:T;
 
 	// Enum constructor
-	constructor(enumeration:T, value?:keyof T)
+	constructor(value:keyof T, enumeration:T)
 	{
 		// Acquire the enumerations keys
 		const keys:Array<string> = Object.keys(enumeration);
@@ -21,7 +21,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 			throw new Error('Invalid enumeration');
 
 		// Call creation on json
-		super(value !== undefined ? value : keys[0] as keyof T);
+		super(value);
 
 		// Store the specified enumeration
 		this.enumeration = enumeration;
