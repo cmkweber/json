@@ -5,7 +5,7 @@ import {JsonRequired} from './Required';
 export class JsonNumber extends JsonRequired<number, number>
 {
 	// Number constructor
-	constructor(value?:number, readonly integer?:boolean, readonly min?:number, readonly max?:number)
+	constructor(readonly integer?:boolean, readonly min?:number, readonly max?:number, value?:number)
 	{
 		// If a minimum was specified, and its invalid, throw error
 		if(min !== undefined && (isNaN(min) || (integer !== undefined && integer && !Number.isSafeInteger(min))))

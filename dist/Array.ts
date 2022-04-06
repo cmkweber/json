@@ -7,7 +7,7 @@ import {JsonRequired} from './Required';
 export class JsonArray<T extends JsonRequired<any, JsonValue> = JsonAny> extends JsonRequired<Array<JsonInput<T>>, Array<JsonOutput<T>>>
 {
 	// Array constructor
-	constructor(value?:Array<JsonInput<T>>, readonly pattern:ReadonlyArray<T> = [], readonly min?:number, readonly max?:number)
+	constructor(readonly pattern:ReadonlyArray<T> = [], readonly min?:number, readonly max?:number, value?:Array<JsonInput<T>>)
 	{
 		// If a minimum was specified, and its invalid, throw error
 		if(min !== undefined && (isNaN(min) || !Number.isSafeInteger(min) || min < 0))

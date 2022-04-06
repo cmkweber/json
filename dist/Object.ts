@@ -23,7 +23,7 @@ export class JsonObject<
 	readonly schema:S|undefined;
 
 	// Object constructor
-	constructor(value?:I, schema?:S)
+	constructor(schema?:S, value?:I)
 	{
 		// Acquire the specified value or create an empty object
 		const values:I = value !== undefined ? value : {} as I;
