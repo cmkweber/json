@@ -5,10 +5,10 @@ import {JsonRequired} from './Required';
 export class JsonBoolean extends JsonRequired<boolean, boolean>
 {
 	// Boolean constructor
-	constructor(readonly match?:boolean, value?:boolean)
+	constructor(value?:boolean)
 	{
 		// Call creation on json
-		super(value !== undefined ? value : (match !== undefined ? match : false));
+		super(value !== undefined ? value : false);
 
 		// If a value was specified, attempt to validate it
 		if(value !== undefined)
@@ -16,12 +16,7 @@ export class JsonBoolean extends JsonRequired<boolean, boolean>
 	}
 
 	// Function to validate the booleans value
-	protected validate():void
-	{
-		// If the boolean has a match, and the value doesnt match, throw error
-		if(this.match !== undefined && this.value !== this.match)
-			throw new Error('Invalid match');
-	}
+	protected validate():void {}
 
 	// Function to parse the specified value
 	parse(value:any):void

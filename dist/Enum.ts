@@ -9,10 +9,9 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 {
 	// Enum members
 	readonly enumeration:T;
-	readonly match?:keyof T|undefined;
 
 	// Enum constructor
-	constructor(enumeration:T, match?:keyof T, value?:keyof T)
+	constructor(enumeration:T, value?:keyof T)
 	{
 		// Acquire the enumerations keys
 		const keys:Array<string> = Object.keys(enumeration);
@@ -22,11 +21,10 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 			throw new Error('Invalid enumeration');
 
 		// Call creation on json
-		super(value !== undefined ? value : (match !== undefined ? match : keys[0] as keyof T));
+		super(value !== undefined ? value : keys[0] as keyof T);
 
-		// Store the specified enumeration and match
+		// Store the specified enumeration
 		this.enumeration = enumeration;
-		this.match = match;
 
 		// If a value was specified, attempt to validate it
 		if(value !== undefined)
@@ -34,12 +32,7 @@ export class JsonEnum<T extends Record<keyof T, number|string>> extends JsonRequ
 	}
 
 	// Function to validate the enums value
-	protected validate():void
-	{
-		// If the enum has a match, and the value doesnt match, throw error
-		if(this.match !== undefined && this.value !== this.match)
-			throw new Error('Invalid match');
-	}
+	protected validate():void {}
 
 	// Function to parse the specified value
 	parse(value:any):void

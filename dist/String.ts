@@ -5,7 +5,7 @@ import {JsonRequired} from './Required';
 export class JsonString extends JsonRequired<string, string>
 {
 	// String constructor
-	constructor(readonly pattern?:RegExp, value?:string)
+	constructor(value?:string, readonly pattern?:RegExp)
 	{
 		// If a pattern was specified, but a value wasnt, throw error
 		if(pattern !== undefined && value === undefined)

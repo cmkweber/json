@@ -5,7 +5,7 @@ import {JsonRequired} from './Required';
 export class JsonNull extends JsonRequired<null, null>
 {
 	// Null constructor
-	constructor() { super(null); }
+	constructor(value?:null) { super(value !== undefined ? value : null); }
 
 	// Function to validate the nulls value
 	protected validate():void {}
