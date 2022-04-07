@@ -1,12 +1,12 @@
 // Package imports
-import {JsonArray} from './Array';
-import {JsonBoolean} from './Boolean';
+/*import {JsonArray} from './Array';
+import {JsonBoolean} from './Boolean';*/
 import {JsonValue} from './Json';
-import {JsonNull} from './Null';
+/*import {JsonNull} from './Null';
 import {JsonNumber} from './Number';
-import {JsonObject} from './Object';
+import {JsonObject} from './Object';*/
 import {JsonRequired} from './Required';
-import {JsonString} from './String';
+/*import {JsonString} from './String';*/
 
 // Any class
 export class JsonAny extends JsonRequired<JsonValue, JsonValue>
@@ -28,9 +28,86 @@ export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 	// Function to parse the specified value
 	parse(value:any):void
 	{
-		// Set the json to null by default
-		let json:JsonRequired<JsonValue, JsonValue>;
+		// Switch between possible types
+		switch(typeof value)
+		{
+			// Boolean and string
+			case 'boolean':
+			case 'string':
+				// Store value and break early
+				this.set(value);
+				break;
 
+			// Number
+			case 'number':
+				// If the specified number is invalid, throw error
+				if(isNaN(value))
+					throw new Error('Invalid number');
+
+				// Store value and break early
+				this.set(value);
+				break;
+
+			// Object
+			case 'object':
+				// If the specified value is null, store it
+				if(value === null)
+					this.set(value);
+				// Else, if the specified value is an array, parse it
+				else if(Array.isArray(value))
+				{
+					// Create an array to store values
+					const values:Array<JsonValue> = [];
+
+					// Create an any to parse values
+					const json:JsonAny = new JsonAny();
+
+					// Loop through specified values and parse
+					for(let v:number = 0; v < value.length; v++)
+					{
+						// Parse this value and add it to values
+						json.parse(value[v]);
+						values.push(json.value);
+					}
+
+					// Store value
+					this.set(values);
+				}
+				// Else, parse object
+				else
+				{
+					// Create an object to store values
+					const values:{[key:string]:JsonValue} = {};
+
+					// Create an any to parse values
+					const json:JsonAny = new JsonAny();
+
+					// Acquire the specified keys
+					const keys:Array<string> = Object.keys(value);
+
+					// Loop through specified objects keys and parse
+					for(let k:number = 0; k < keys.length; k++)
+					{
+						// Acquire this key
+						const key:string = keys[k];
+
+						// Parse this key and add it to values
+						json.parse(value[key]);
+						values[key] = json.value;
+					}
+
+					// Store value
+					this.set(values);
+				}
+
+				// Break early
+				break;
+
+			// Invalid type
+			default:
+				throw new Error('Invalid type');
+		}
+/*
 		// If the specified value is a boolean, set the json to boolean
 		if(typeof value === 'boolean')
 			json = new JsonBoolean();
@@ -58,7 +135,7 @@ export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 		json.parse(value);
 
 		// Set the specified value
-		this.set(json.value);
+		this.set(json.value);*/
 	}
 
 	// Function to serialize the anys value
