@@ -35,7 +35,7 @@ export class JsonAny extends JsonRequired<JsonValue, JsonValue>
 			// Number
 			case 'number':
 				// If the specified number is invalid, throw error
-				if(isNaN(value))
+				if(isNaN(value) || (Number.isInteger(value) && !Number.isSafeInteger(value)))
 					throw new Error('Invalid number');
 
 				// Store value and break early
