@@ -170,7 +170,7 @@ export class JsonObject<
 			{
 				// If the json is required, and this key wasnt specified, throw error
 				if(json instanceof JsonRequired && (!(key in value) || value[key] === undefined))
-					throw new Error('Missing key ' + key);
+					throw new Error('Missing key "' + key + '"');
 			}
 
 			// If the objects key wasnt defined, skip it
