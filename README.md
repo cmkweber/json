@@ -24,7 +24,7 @@ new JsonAny(
 
 ```typescript
 new JsonArray(
-	pattern, // Array of primitives which values must validate against sequentially
+	pattern:Array<Json<T>>, // Array of primitives which values must validate against sequentially
 	min?:number, // Minimum amount of values
 	max?:number // Maximum amount of values,
 	value?:Array<T> // Default value
@@ -60,7 +60,7 @@ new JsonNull(
 
 ```typescript
 new JsonNumber(
-	integer?:number, // Whether the number should be a safe integer or not
+	integer?:boolean, // Whether the number should be a safe integer or not
 	min?:number, // Minimum number value
 	max?:number, // Maximum number value
 	value?:number // Default value
@@ -71,7 +71,7 @@ new JsonNumber(
 
 ```typescript
 new JsonObject(
-	schema?:Record<string, Json>, // A map describing the object schema
+	schema?:Record<string, Json<T>>, // A map describing the object schema
 	value?:T // Default value
 );
 ```
@@ -80,7 +80,7 @@ new JsonObject(
 
 ```typescript
 new JsonOptional(
-	json:Json, // A primitive that will be validated when this optionals value is provided
+	json:Json<T>, // A primitive that will be validated when this optionals value is provided
 	value?:T // Default value
 );
 ```
@@ -185,3 +185,7 @@ export class JsonProduct extends JsonObject<typeof ProductSchema>
 	}
 }
 ```
+
+## Helper primitives
+
+For additional primitives not covered by strict json types, such as JsonDate, JsonUrl, etc., see [jsoncommon](https://github.com/cmkweber/jsoncommon).
