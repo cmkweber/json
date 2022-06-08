@@ -1,4 +1,4 @@
-# Json
+# json
 
 Class based Json Schema Validation with typescript type inference.
 
