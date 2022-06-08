@@ -188,8 +188,8 @@ export class JsonProduct extends JsonObject<typeof ProductSchema>
 	}
 }
 ```
-&NewLine;
-&NewLine;
+<br/>
+<br/>
 ## Helper primitives
 
 For additional primitives not covered by strict json types, such as JsonDate, JsonUrl, etc., see [jsoncommon](https://github.com/cmkweber/jsoncommon).
