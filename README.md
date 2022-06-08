@@ -2,11 +2,13 @@
 
 Class based Json Schema Validation with typescript type inference.
 
+
 ## Description
 
 There are many Json validators, including my favorite [myzod](https://github.com/davidmdm/myzod).
 This package attempts to validate using classes to allow implementers to extend functionality.
 For instance, a Document class could extend from JsonObject and provide remote CRUD operations.
+
 
 ## Usage
 
@@ -93,6 +95,7 @@ new JsonString(
 	value?:string // Default value, must be provided if pattern is provided
 );
 ```
+
 
 ## Example
 
@@ -185,6 +188,7 @@ export class JsonProduct extends JsonObject<typeof ProductSchema>
 	}
 }
 ```
+
 
 ## Helper primitives
 
