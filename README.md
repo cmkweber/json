@@ -144,7 +144,7 @@ export class JsonProduct extends JsonObject<typeof ProductSchema>
 	}
 
 	// Function to download product from database
-	static async fromDatabase(id:number):Promise<JsonProduct>
+	static async fromDatabase(id:string):Promise<JsonProduct>
 	{
 		// Create a url based on specified id
 		const url:URL = new URL('https://www.store.com/products/' + id);
