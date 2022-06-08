@@ -59,7 +59,7 @@ export class JsonObject<
 	}
 
 	// Function to validate the objects value
-	validate():void
+	protected validate():void
 	{
 		// If the object doesnt have a schema, return early
 		if(this.schema === undefined)
