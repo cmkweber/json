@@ -30,7 +30,7 @@ new JsonAny(
 new JsonArray(
 	pattern:Array<Json<T>>, // Array of primitives which values must validate against sequentially
 	min?:number, // Minimum amount of values
-	max?:number // Maximum amount of values,
+	max?:number, // Maximum amount of values
 	value?:Array<T> // Default value
 );
 ```
