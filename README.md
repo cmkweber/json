@@ -84,8 +84,7 @@ new JsonObject(
 
 ```typescript
 new JsonOptional(
-	json:Json<T>, // A primitive that will be validated when this optionals value is provided
-	value?:T // Default value
+	json:Json<T> // A primitive that will be validated when this optionals value is provided
 );
 ```
 
@@ -95,6 +94,15 @@ new JsonOptional(
 new JsonString(
 	pattern?:RegExp, // A regular expression pattern the string will be tested against
 	value?:string // Default value, must be provided if pattern is provided
+);
+```
+
+### JsonUnion
+
+```typescript
+new JsonUnion(
+	a:Json<T>, // A primitive that will be validated when this unions value is provided
+	b:Json<T> // A primitive that will be validated when this unions value is provided
 );
 ```
 <br/>

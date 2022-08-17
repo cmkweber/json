@@ -12,3 +12,5 @@ export type {JsonObjectInput, JsonObjectOutput, JsonObjectSchema, JsonObjectUpda
 export {JsonOptional} from './dist/Optional';
 export {JsonRequired} from './dist/Required';
 export {JsonString} from './dist/String';
+export {JsonUnion} from './dist/Union';
+export type {JsonUnionInput, JsonUnionOutput} from './dist/Union';
