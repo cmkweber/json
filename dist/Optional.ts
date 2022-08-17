@@ -13,17 +13,13 @@ export class JsonOptional<T extends JsonRequired<any, JsonValue> = JsonAny> exte
 	override get value():JsonInput<T> { return this.json.value as JsonInput<T>; }
 
 	// Optional constructor
-	constructor(readonly json:T, value?:JsonInput<T>)
+	constructor(readonly json:T)
 	{
 		// Call creation on json
-		super(value !== undefined ? value : json.value as JsonInput<T>);
+		super(json.value);
 
 		// Set that the json is optional
 		this.#required;
-
-		// If a value was specified, attempt to validate it
-		if(value !== undefined)
-			this.validate();
 	}
 
 	// Function to set the optionals value
