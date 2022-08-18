@@ -4,28 +4,61 @@ import {JsonRequired} from './Required';
 // Number class
 export class JsonNumber extends JsonRequired<number, number>
 {
-	// Number constructor
-	constructor(readonly integer?:boolean, readonly min?:number, readonly max?:number, value?:number)
-	{
-		// If a minimum was specified, and its invalid, throw error
-		if(min !== undefined && (isNaN(min) || (integer !== undefined && integer && !Number.isSafeInteger(min))))
-			throw new Error('Invalid minimum');
+	// Number members
+	readonly max?:number;
+	readonly min?:number;
 
-		// If a maximum was specified, and its invalid, throw error
-		if(max !== undefined && (isNaN(max) || (integer !== undefined && integer && !Number.isSafeInteger(max))))
-			throw new Error('Invalid maximum');
+	// Number constructor
+	constructor(readonly precision:number = 20, min?:number, max?:number, value?:number)
+	{
+		// If the specified precision is invalid, throw error
+		if(isNaN(precision) || precision < 0 || precision > 20 || !Number.isSafeInteger(precision))
+			throw new Error('Invalid precision');
+
+		// If a minimum was specified, determine if its valid
+		if(min !== undefined)
+		{
+			// If the minimum is invalid, throw error
+			if(isNaN(min))
+				throw new Error('Invalid minimum');
+
+			// Clamp the minimum to the specified precision
+			min = Number(min.toFixed(precision));
+		}
+
+		// If a maximum was specified, determine if its valid
+		if(max !== undefined)
+		{
+			// If the maximum is invalid, throw error
+			if(isNaN(max))
+				throw new Error('Invalid maximum');
+
+			// Clamp the maximum to the specified precision
+			max = Number(max.toFixed(precision));
+		}
 
 		// If a minimum and maximum were specified, and theyre invalid, throw error
 		if(min !== undefined && max !== undefined && min > max)
 			throw new Error('Invalid range');
 
 		// Call creation on json
-		super(value !== undefined ? value : (min !== undefined ? min : (integer ? 0 : 0.0)));
+		super(value !== undefined ? Number(value.toFixed(precision)) : (min !== undefined ? min : 0));
+
+		// If a minimum was specified, store it
+		if(min !== undefined)
+			this.min = min;
+
+		// If a maximum was specified, store it
+		if(max !== undefined)
+			this.max = max;
 
 		// If a value was specified, attempt to validate it
 		if(value !== undefined)
 			this.validate();
 	}
+
+	// Function to set the numbers value
+	override set(value:number) { super.set(Number(value.toFixed(this.precision))); }
 
 	// Function to validate the numbers value
 	protected validate():void
@@ -33,10 +66,6 @@ export class JsonNumber extends JsonRequired<number, number>
 		// If the value isnt a valid number, throw error
 		if(isNaN(this.value))
 			throw new Error('Invalid number');
-
-		// If the number is an integer, and the value isnt an integer, throw error
-		if(this.integer !== undefined && this.integer && !Number.isSafeInteger(this.value))
-			throw new Error('Invalid integer');
 
 		// If the number has a minimum, and the value is below it, throw error
 		if(this.min !== undefined && this.value < this.min)

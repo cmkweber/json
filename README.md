@@ -64,7 +64,7 @@ new JsonNull(
 
 ```typescript
 new JsonNumber(
-	integer?:boolean, // Whether the number should be a safe integer or not
+	precision:number = 20, // The number of digits after the floating point between 0 and 20
 	min?:number, // Minimum number value
 	max?:number, // Maximum number value
 	value?:number // Default value
