@@ -75,7 +75,7 @@ export class JsonObject<
 			const key:string = keys[k];
 			const json:Json<any, JsonValue> = this.schema[key as keyof S];
 
-			// Attempt to parse this key
+			// Attempt to set this key
 			try
 			{
 				// If the json is required, or the key exists, attempt to set it
